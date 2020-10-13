@@ -37,10 +37,31 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+    '@nuxtjs/auth',
+    [
+      '@nuxtjs/firebase',
+      {
+        config: {
+          apiKey: 'AIzaSyAVyHBee1kvUp76_dCSnQoaamyokcvNHAU',
+          authDomain: 'cityemark-460da.firebaseapp.com',
+          databaseURL: 'https://cityemark-460da.firebaseio.com',
+          projectId: 'cityemark-460da',
+          storageBucket: 'cityemark-460da.appspot.com',
+          messagingSenderId: '471217878180',
+          appId: '1:471217878180:web:28334c3e847ff0f051e231',
+          measurementId: 'G-JHC2S4F28T',
+        },
+        services: {
+          storage: true,
+        },
+      },
+    ],
   ],
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
-  axios: {},
+  axios: {
+    baseURL: 'http://cityemark.com/server/apis',
+  },
 
   // Vuetify module configuration (https://go.nuxtjs.dev/config-vuetify)
   vuetify: {
@@ -63,4 +84,23 @@ export default {
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {},
+  auth: {
+    strategies: {
+      local: {
+        endpoints: {
+          login: {
+            url: '/login.php',
+            method: 'post',
+            propertyName: 'data.data[0].jwt',
+          },
+          logout: false,
+          user: {
+            url: '/usuarioComercio.php',
+            method: 'get',
+            propertyName: 'data.data[0]',
+          },
+        },
+      },
+    },
+  },
 }

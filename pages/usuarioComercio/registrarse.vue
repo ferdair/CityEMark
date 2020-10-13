@@ -63,15 +63,34 @@
                   ></v-date-picker>
                 </v-menu>
 
-                <v-textarea
+                <!--   <v-textarea
                   v-model="observaciones"
                   :rules="observacionesRules"
                   label="Observaciones"
                   prepend-icon="mdi-pencil"
                   required
                 >
-                </v-textarea>
-
+                </v-textarea> -->
+                <v-select
+                  v-on:change="changeCiudad"
+                  v-model="provincia"
+                  :items="provincias"
+                  item-text="nombreProv"
+                  item-key="provincia"
+                  item-value="id_provincia"
+                  label="Provincia"
+                  prepend-icon="mdi-map"
+                ></v-select>
+                <v-select
+                  v-on:change="changeCiudad2"
+                  v-model="ciudad"
+                  :items="ciudades"
+                  item-text="nombreCiu"
+                  item-key="ciudades"
+                  item-value="id_ciudad"
+                  label="Ciudad"
+                  prepend-icon="mdi-map-marker"
+                ></v-select>
                 <v-text-field
                   v-model="correo"
                   :rules="correoRules"
@@ -94,7 +113,7 @@
           <v-divider></v-divider>
           <v-card-actions>
             <v-btn color="error" class="mr-4" @click="reset"> Limpiar </v-btn>
-            <v-btn @click="registrarse" color="success">Registrarse</v-btn>
+            <v-btn color="success" @click="registrarse">Registrarse</v-btn>
           </v-card-actions>
         </v-card>
       </v-container>
@@ -107,10 +126,13 @@
 
 <script>
 import axios from 'axios'
-import env from '../config/env'
+import { mapGetters } from 'vuex'
+
+import env from '../../config/env'
 
 export default {
   name: 'Registrarse',
+
   data: () => ({
     valid: true,
     nombre: '',
@@ -124,14 +146,14 @@ export default {
     telefonoRules: [
       (v) => !!v || 'Telefono es requerido',
       (v) => /^([0-9])*$/.test(v) || 'El teléfono debe ser válido',
-      (v) => (v || '').length === 10 || 'La cédula debe tener 10 caracteres',
+      (v) => (v || '').length === 10 || 'El teléfono debe tener 10 caracteres',
     ],
     fecha: '',
     fechaRules: [(v) => !!v || 'Fecha de nacimiento es requerido'],
     fromDateMenu: false,
     fromDateVal: null,
     observaciones: '',
-    observacionesRules: [(v) => !!v || 'Observaciones es requerido'],
+    // observacionesRules: [(v) => !!v || 'Observaciones es requerido'],
     correo: '',
     correoRules: [
       (v) => !!v || 'Correo es requerido',
@@ -142,13 +164,25 @@ export default {
     showPassword: false,
     error: false,
     error_msg: '',
+    provincias: [],
+    provincia: '',
+    ciudades: [],
+    ciudad: '',
   }),
   computed: {
+    ...mapGetters(['getAux']),
     fromDateDisp() {
       return this.fromDateVal
-      // format date, apply validations, etc. Example below.
-      // return this.fromDateVal ? this.formatDate(this.fromDateVal) : "";
     },
+  },
+  created() {
+    this.provincias = this.getAux.provincia.filter(
+      (m) => m.nombreProv !== 'No State'
+    )
+
+    /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
+    /*     console.warn(this.getAux.provincia)
+     */
   },
   methods: {
     validate() {
@@ -160,7 +194,7 @@ export default {
     resetValidation() {
       this.$refs.form.resetValidation()
     },
-    registrarse() {
+    async registrarse() {
       this.validate()
 
       if (this.$refs.form.validate()) {
@@ -172,17 +206,28 @@ export default {
           fechaNac: this.fromDateVal,
           observaciones: this.observaciones,
           clave: this.password,
+          ciudad: this.ciudad,
         }
 
-        axios.post(`${env.endpoint}/usuarioComercio.php`, json).then((data) => {
-          if (data.data.code === 200) {
-            location.replace('/')
-          } else {
-            this.error = true
-            this.error_msg = data.data.message + this.c
-          }
-        })
+        const data = await axios.post(
+          `${env.endpoint}/usuarioComercio.php`,
+          json
+        )
+        if (data.data.code === 200) {
+          location.replace('/login')
+        } else {
+          this.error = true
+          this.error_msg = data.data.message
+        }
       }
+    },
+    changeCiudad() {
+      this.ciudades = this.getAux.ciudad.filter(
+        (m) => m.provincia === this.provincia
+      )
+    },
+    changeCiudad2() {
+      alert(this.ciudad)
     },
   },
 }
