@@ -12,7 +12,13 @@
         <v-divider></v-divider>
 
         <v-list dense nav>
-          <v-list-item v-for="item in items" :key="item.title" link>
+          <v-list-item
+            v-for="item in items"
+            :key="item.title"
+            :to="item.path"
+            nuxt
+            link
+          >
             <v-list-item-icon>
               <v-icon>{{ item.icon }}</v-icon>
             </v-list-item-icon>
@@ -73,20 +79,44 @@ export default {
   name: 'UsuarioComercio',
 
   data: () => ({
-    drawer: null,
+    drawer: false,
     user: {
       initials: '',
       fullName: '',
       email: '',
     },
     items: [
-      { title: 'Inicio', icon: 'mdi-view-dashboard' },
-      { title: 'Vitrinas', icon: 'mdi-store' },
-      { title: 'Promociones', icon: 'mdi-piggy-bank' },
-      { title: 'Productos', icon: 'mdi-package-variant' },
-      { title: 'Estadísticas', icon: 'mdi-chart-areaspline-variant' },
-      { title: 'Generador de catálogo', icon: 'mdi-pdf-box' },
-      { title: 'Contactar a soporte', icon: 'mdi-help-box' },
+      {
+        title: 'Inicio',
+        icon: 'mdi-view-dashboard',
+        path: '/usuarioComercio',
+      },
+      { title: 'Vitrinas', icon: 'mdi-store', path: '/comercio/vitrinas' },
+      {
+        title: 'Promociones',
+        icon: 'mdi-piggy-bank',
+        path: '/comercio/promociones',
+      },
+      {
+        title: 'Productos',
+        icon: 'mdi-package-variant',
+        path: '/comercio/productos',
+      },
+      {
+        title: 'Estadísticas',
+        icon: 'mdi-chart-areaspline-variant',
+        path: '/comercio/estadisticas',
+      },
+      {
+        title: 'Generador de catálogo',
+        icon: 'mdi-pdf-box',
+        path: '/comercio/catalogo',
+      },
+      {
+        title: 'Contactar a soporte',
+        icon: 'mdi-help-box',
+        path: '/comercio/soporte',
+      },
     ],
     right: null,
   }),

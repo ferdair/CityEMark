@@ -41,7 +41,61 @@
                   :rules="direccionRules"
                   required
                 ></v-text-field>
-
+                <v-container>
+                  <v-row>
+                    <v-col cols="12" md="5">
+                      <v-text-field
+                        v-model="nuevoTelefono"
+                        prepend-icon="mdi-phone"
+                        label="Telefono"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" md="5">
+                      <v-radio-group v-model="tipoNuevoTelefono" row>
+                        <v-radio
+                          v-for="n in 3"
+                          :key="n"
+                          :label="`${labelTelefonos[n - 1]}`"
+                          :value="n"
+                        ></v-radio> </v-radio-group></v-col
+                    ><v-col cols="12" md="2">
+                      <v-btn
+                        class="mx-2"
+                        fab
+                        dark
+                        color="indigo"
+                        @click="agregarTelefono"
+                      >
+                        <v-icon dark> mdi-plus </v-icon>
+                      </v-btn>
+                    </v-col></v-row
+                  >
+                  <v-row>
+                    <v-col>
+                      <v-chip-group>
+                        <v-chip
+                          v-for="(fono, index) in telefonos"
+                          v-bind:key="index"
+                          class="ma-2"
+                          :color="
+                            fono.tipoTelefono == 0
+                              ? 'blue darken-4'
+                              : fono.tipoTelefono == 1
+                              ? 'green darken-4'
+                              : fono.tipoTelefono == 1
+                              ? 'teal'
+                              : 'red'
+                          "
+                          text-color="white"
+                          close
+                          @click:close="quitarTelefono(fono.telefono)"
+                        >
+                          {{ fono.telefono }}
+                        </v-chip>
+                      </v-chip-group>
+                    </v-col>
+                  </v-row>
+                </v-container>
                 <v-select
                   v-on:change="changeCiudad"
                   v-model="provincia"
@@ -142,6 +196,14 @@ export default {
     categorias: [],
     picture: '',
     file: null,
+    nuevoTelefono: '',
+    tipoNuevoTelefono: null,
+    telefonos: [],
+    labelTelefonos: [
+      'Teléfono sólo llamadas',
+      'Teléfono solo Whatsapp',
+      'Teléfono para Llamadas y Whatsapp',
+    ],
   }),
   computed: {
     ...mapGetters(['getAux', 'loggedInUser']),
@@ -253,6 +315,14 @@ export default {
 
         const data = await axios.post(env.endpoint + '/datosComercio.php', json)
         if (data.data.code === 200) {
+          this.telefonos.forEach(async (element) => {
+            await axios.post(env.endpoint + 'telefonoComercio.php', {
+              numeroTelefono: element.telefono,
+              idComercio: data.data.data[0].id,
+              tipoTelefono: element.tipoTelefono,
+            })
+          })
+
           const patchUser = await axios.patch(
             env.endpoint + '/usuarioComercio.php',
             {
@@ -295,6 +365,17 @@ export default {
     },
     uploadImage(e) {
       this.file = e.target.files[0]
+    },
+    agregarTelefono() {
+      alert(this.tipoNuevoTelefono - 1)
+      this.telefonos.push({
+        telefono: this.nuevoTelefono,
+        tipoTelefono: this.tipoNuevoTelefono - 1,
+      })
+      this.nuevoTelefono = ''
+    },
+    quitarTelefono(numero) {
+      this.telefonos = this.telefonos.filter((i) => i.telefono !== numero)
     },
   },
 }
