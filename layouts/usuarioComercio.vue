@@ -124,7 +124,7 @@ export default {
     ...mapGetters(['getAux', 'loggedInUser']),
   },
   created() {
-    this.user.fullName = this.loggedInUser.nombre
+    this.user.fullName = this.loggedInUser.nombre + ' a'
     this.user.email = this.loggedInUser.correo
     const name = this.user.fullName.split(' ', 2)
     this.user.initials = `${name[0][0]} ${name[1][0]}`

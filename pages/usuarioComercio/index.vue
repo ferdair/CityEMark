@@ -138,7 +138,8 @@ export default {
       env.endpoint + '/datosComercio.php?id=' + this.loggedInUser.idComercio
     )
     this.tienda.src = comercio.data.data[0].imagenLogo
-    this.tienda.nombre = comercio.data.data[0].nombre
+    this.tienda.nombre =
+      comercio.data.data[0].nombre + ' ' + comercio.data.data[0].id
     this.tienda.eslogan = comercio.data.data[0].eslogan
   },
 }

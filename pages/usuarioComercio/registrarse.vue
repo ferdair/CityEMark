@@ -135,6 +135,7 @@ export default {
 
   data: () => ({
     valid: true,
+    aux: null,
     nombre: '',
     nombreRules: [(v) => !!v || 'Nombre es requerido'],
     cedula: '',
@@ -175,8 +176,10 @@ export default {
       return this.fromDateVal
     },
   },
-  created() {
-    this.provincias = this.getAux.provincia.filter(
+  async created() {
+    const data = await axios.get(env.endpoint + '/auxiliarComercio.php')
+    this.aux = data.data.data[0]
+    this.provincias = this.aux.provincia.filter(
       (m) => m.nombreProv !== 'No State'
     )
 
@@ -222,7 +225,7 @@ export default {
       }
     },
     changeCiudad() {
-      this.ciudades = this.getAux.ciudad.filter(
+      this.ciudades = this.aux.ciudad.filter(
         (m) => m.provincia === this.provincia
       )
     },

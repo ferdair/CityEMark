@@ -1,9 +1,8 @@
 export default function ({ $auth, redirect, store }) {
-  const auth = $auth.loggedIn
+  const user = $auth.user
 
-  if (auth) {
+  if (user.idComercio !== 0) {
     redirect('/usuarioComercio')
   } else {
-    redirect('/login')
   }
 }

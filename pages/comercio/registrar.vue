@@ -51,7 +51,7 @@
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="5">
-                      <v-radio-group v-model="tipoNuevoTelefono" row>
+                      <v-radio-group v-model="tipoNuevoTelefono">
                         <v-radio
                           v-for="n in 3"
                           :key="n"
@@ -72,7 +72,7 @@
                   >
                   <v-row>
                     <v-col>
-                      <v-chip-group>
+                      <v-chip-group column>
                         <v-chip
                           v-for="(fono, index) in telefonos"
                           v-bind:key="index"
@@ -91,6 +91,70 @@
                           @click:close="quitarTelefono(fono.telefono)"
                         >
                           {{ fono.telefono }}
+                        </v-chip>
+                      </v-chip-group>
+                    </v-col>
+                  </v-row>
+                </v-container>
+                <v-container>
+                  <v-row>
+                    <v-col cols="12" md="5">
+                      <v-text-field
+                        v-model="nuevaRed"
+                        prepend-icon="mdi-earth"
+                        label="Link de Redes Sociales"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" md="5">
+                      <v-select
+                        v-model="nuevoTipoRed"
+                        :items="tiposRedes"
+                        item-text="nombreTipoRed"
+                        item-key="nuevoTipoRed"
+                        item-value="id_tipoRS"
+                        label="Red Social"
+                        prepend-icon="mdi-link-variant"
+                      ></v-select>
+
+                      <!--  <v-select
+                  v-on:change="changeCiudad"
+                  v-model="provincia"
+                  :items="provincias"
+                  item-text="nombreProv"
+                  item-key="provincia"
+                  item-value="id_provincia"
+                  label="Provincia"
+                  prepend-icon="mdi-map"
+                ></v-select> --> </v-col
+                    ><v-col cols="12" md="2">
+                      <v-btn
+                        class="mx-2"
+                        fab
+                        dark
+                        color="indigo"
+                        @click="agregarRedSocial"
+                      >
+                        <v-icon dark> mdi-plus </v-icon>
+                      </v-btn>
+                    </v-col></v-row
+                  >
+                  <v-row>
+                    <v-col>
+                      <v-chip-group column>
+                        <v-chip
+                          v-for="(red, index) in redesSociales"
+                          v-bind:key="index"
+                          class="ma-2"
+                          color="red"
+                          text-color="white"
+                          close
+                          @click:close="quitarRed(red.urlRedSocial)"
+                          ><v-avatar left>
+                            <v-icon>{{
+                              tiposRedes[nuevoTipoRed - 1].observaciones
+                            }}</v-icon>
+                          </v-avatar>
+                          {{ red.urlRedSocial }}
                         </v-chip>
                       </v-chip-group>
                     </v-col>
@@ -170,6 +234,7 @@ import env from '../../config/env'
 
 export default {
   name: 'RegistrarComercio',
+  middleware: ['auth', 'tieneTienda'],
   data: () => ({
     auxiliares: null,
     valid: true,
@@ -204,6 +269,10 @@ export default {
       'Teléfono solo Whatsapp',
       'Teléfono para Llamadas y Whatsapp',
     ],
+    nuevaRed: '',
+    nuevoTipoRed: null,
+    redesSociales: [],
+    tiposRedes: null,
   }),
   computed: {
     ...mapGetters(['getAux', 'loggedInUser']),
@@ -231,6 +300,11 @@ export default {
     this.tiposComercio = this.auxiliares.tipoComercio.filter(
       (m) => m.nombreTipoComercio !== 'Tipo de Comercio'
     )
+
+    const redessoc = await axios.get(
+      env.endpoint + '/redesComercio.php?id=tipoRedSocial'
+    )
+    this.tiposRedes = redessoc.data.data
 
     /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
     /*     console.warn(this.getAux.provincia)
@@ -314,13 +388,32 @@ export default {
         }
 
         const data = await axios.post(env.endpoint + '/datosComercio.php', json)
+
         if (data.data.code === 200) {
           this.telefonos.forEach(async (element) => {
-            await axios.post(env.endpoint + 'telefonoComercio.php', {
+            await axios.post(env.endpoint + '/telefonoComercio.php', {
               numeroTelefono: element.telefono,
               idComercio: data.data.data[0].id,
               tipoTelefono: element.tipoTelefono,
             })
+          })
+
+          this.redesSociales.forEach(async (element) => {
+            alert(data.data.data[0].id)
+            alert(element.urlRedSocial)
+            alert(element.idTipoRedSocial)
+            debugger
+            const a = await axios.post(env.endpoint + '/redesComercio.php', {
+              idComercio: data.data.data[0].id,
+              urlRedSocial: element.urlRedSocial,
+              idTipoRedSocial: element.idTipoRedSocial,
+            })
+
+            if (a.data.code === 200) {
+              alert('exitoso')
+            } else {
+              alert(a.data.message)
+            }
           })
 
           const patchUser = await axios.patch(
@@ -367,7 +460,6 @@ export default {
       this.file = e.target.files[0]
     },
     agregarTelefono() {
-      alert(this.tipoNuevoTelefono - 1)
       this.telefonos.push({
         telefono: this.nuevoTelefono,
         tipoTelefono: this.tipoNuevoTelefono - 1,
@@ -376,6 +468,20 @@ export default {
     },
     quitarTelefono(numero) {
       this.telefonos = this.telefonos.filter((i) => i.telefono !== numero)
+    },
+    agregarRedSocial() {
+      alert(this.nuevoTipoRed)
+      this.redesSociales.push({
+        urlRedSocial: this.nuevaRed,
+        idTipoRedSocial: this.nuevoTipoRed,
+      })
+
+      this.nuevaRed = ''
+    },
+    quitarRed(red) {
+      this.redesSociales = this.redesSociales.filter(
+        (i) => i.urlRedSocial !== red
+      )
     },
   },
 }

@@ -24,7 +24,9 @@
       </v-card-text>
       <v-divider></v-divider>
       <v-card-actions>
-        <v-btn to="/registrarse" nuxt color="success">Registrarse</v-btn>
+        <v-btn to="/usuarioComercio/registrarse" nuxt color="success"
+          >Registrarse</v-btn
+        >
 
         <v-btn color="info" @click="userLogin">Iniciar Sesión</v-btn>
       </v-card-actions>
