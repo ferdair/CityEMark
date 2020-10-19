@@ -9,104 +9,112 @@
           <v-card-text>
             <v-container>
               <v-form ref="form" v-model="valid" lazy-validation>
-                <v-text-field
-                  v-model="nombre"
-                  prepend-icon="mdi-account"
-                  :rules="nombreRules"
-                  label="Nombre"
-                  required
-                ></v-text-field>
-
-                <v-text-field
-                  v-model="cedula"
-                  :counter="10"
-                  prepend-icon="mdi-badge-account-horizontal"
-                  :rules="cedulaRules"
-                  label="Cedula"
-                  required
-                ></v-text-field>
-
-                <v-text-field
-                  v-model="telefono"
-                  :counter="10"
-                  prepend-icon="mdi-cellphone"
-                  :rules="telefonoRules"
-                  label="Telefono"
-                  required
-                ></v-text-field>
-
-                <v-menu
-                  v-model="fromDateMenu"
-                  :close-on-content-click="false"
-                  :nudge-right="40"
-                  transition="scale-transition"
-                  offset-y
-                  max-width="290px"
-                  min-width="290px"
-                >
-                  <template v-slot:activator="{ on }">
+                <v-row>
+                  <v-col cols="12" md="6">
                     <v-text-field
-                      label="Fecha de nacimiento"
-                      readonly
-                      prepend-icon="mdi-calendar"
-                      :value="fromDateDisp"
-                      :rules="fechaRules"
+                      v-model="nombre"
+                      prepend-icon="mdi-account"
+                      :rules="nombreRules"
+                      label="Nombre"
                       required
-                      v-on="on"
                     ></v-text-field>
-                  </template>
-                  <v-date-picker
-                    v-model="fromDateVal"
-                    locale="en-in"
-                    no-title
-                    @input="fromDateMenu = false"
-                  ></v-date-picker>
-                </v-menu>
-
-                <!--   <v-textarea
-                  v-model="observaciones"
-                  :rules="observacionesRules"
-                  label="Observaciones"
-                  prepend-icon="mdi-pencil"
-                  required
-                >
-                </v-textarea> -->
-                <v-select
-                  v-on:change="changeCiudad"
-                  v-model="provincia"
-                  :items="provincias"
-                  item-text="nombreProv"
-                  item-key="provincia"
-                  item-value="id_provincia"
-                  label="Provincia"
-                  prepend-icon="mdi-map"
-                ></v-select>
-                <v-select
-                  v-on:change="changeCiudad2"
-                  v-model="ciudad"
-                  :items="ciudades"
-                  item-text="nombreCiu"
-                  item-key="ciudades"
-                  item-value="id_ciudad"
-                  label="Ciudad"
-                  prepend-icon="mdi-map-marker"
-                ></v-select>
-                <v-text-field
-                  v-model="correo"
-                  :rules="correoRules"
-                  label="Correo"
-                  prepend-icon="mdi-email"
-                  required
-                ></v-text-field>
-                <v-text-field
-                  v-model="password"
-                  :rules="passwordRules"
-                  :type="showPassword ? 'text' : 'password'"
-                  label="Contraseña"
-                  prepend-icon="mdi-lock"
-                  :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                  @click:append="showPassword = !showPassword"
-                />
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <v-text-field
+                      v-model="cedula"
+                      :counter="10"
+                      prepend-icon="mdi-badge-account-horizontal"
+                      :rules="cedulaRules"
+                      label="Cedula"
+                      required
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <v-text-field
+                      v-model="telefono"
+                      :counter="10"
+                      prepend-icon="mdi-cellphone"
+                      :rules="telefonoRules"
+                      label="Telefono"
+                      required
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <v-menu
+                      v-model="fromDateMenu"
+                      :close-on-content-click="false"
+                      :nudge-right="40"
+                      transition="scale-transition"
+                      offset-y
+                      max-width="290px"
+                      min-width="290px"
+                    >
+                      <template v-slot:activator="{ on }">
+                        <v-text-field
+                          label="Fecha de nacimiento"
+                          readonly
+                          prepend-icon="mdi-calendar"
+                          :value="fromDateDisp"
+                          :rules="fechaRules"
+                          required
+                          v-on="on"
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
+                        v-model="fromDateVal"
+                        year-icon="mdi-calendar-blank"
+                        prev-icon="mdi-skip-previous"
+                        next-icon="mdi-skip-next"
+                        locale="es-ES"
+                        @input="fromDateMenu = false"
+                      ></v-date-picker>
+                    </v-menu>
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <v-select
+                      v-on:change="changeCiudad"
+                      v-model="provincia"
+                      :items="provincias"
+                      item-text="nombreProv"
+                      item-key="provincia"
+                      item-value="id_provincia"
+                      label="Provincia"
+                      prepend-icon="mdi-map"
+                    ></v-select>
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <v-select
+                      v-on:change="changeCiudad2"
+                      v-model="ciudad"
+                      :items="ciudades"
+                      item-text="nombreCiu"
+                      item-key="ciudades"
+                      item-value="id_ciudad"
+                      label="Ciudad"
+                      prepend-icon="mdi-map-marker"
+                    ></v-select>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-text-field
+                      v-model="correo"
+                      :rules="correoRules"
+                      label="Correo"
+                      prepend-icon="mdi-email"
+                      required
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-text-field
+                      v-model="password"
+                      :rules="passwordRules"
+                      :type="showPassword ? 'text' : 'password'"
+                      label="Contraseña"
+                      prepend-icon="mdi-lock"
+                      :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                      @click:append="showPassword = !showPassword"
+                    />
+                  </v-col>
+                </v-row>
               </v-form>
             </v-container>
           </v-card-text>

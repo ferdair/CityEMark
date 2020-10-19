@@ -1,6 +1,322 @@
 <template>
   <v-app>
-    <div>
+    <v-container>
+      <v-row>
+        <v-col cols="12">
+          <v-stepper v-model="e1">
+            <v-stepper-header>
+              <v-stepper-step :complete="e1 > 1" step="1" editable>
+                Categoría
+              </v-stepper-step>
+
+              <v-divider></v-divider>
+
+              <v-stepper-step :complete="e1 > 2" step="2" editable>
+                Datos
+              </v-stepper-step>
+
+              <v-divider></v-divider>
+
+              <v-stepper-step step="3" editable>Logo</v-stepper-step>
+            </v-stepper-header>
+
+            <v-stepper-items>
+              <v-stepper-content step="1">
+                <v-card class="mb-12">
+                  <v-col cols="12">
+                    <v-select
+                      v-on:change="changeCategoria"
+                      v-model="tipoComercio"
+                      :items="tiposComercio"
+                      item-text="nombreTipoComercio"
+                      item-key="tipoComercio"
+                      item-value="id_tipoComercio"
+                      label="Tipo de comercio"
+                      prepend-icon="mdi-map"
+                    ></v-select>
+                  </v-col>
+
+                  <v-col cols="12">
+                    <v-select
+                      v-model="categoria"
+                      :items="categorias"
+                      item-text="nombreCat"
+                      item-key="tipoComercio"
+                      item-value="id_categoria"
+                      label="Categoría"
+                      prepend-icon="mdi-map-marker"
+                    ></v-select>
+                  </v-col>
+                </v-card>
+
+                <v-btn color="primary" @click="e1 = 2"> Continue </v-btn>
+
+                <v-btn text> Cancel </v-btn>
+              </v-stepper-content>
+
+              <v-stepper-content step="2">
+                <v-card class="mb-12"
+                  ><v-container>
+                    <v-form ref="form" v-model="valid" lazy-validation>
+                      <v-row>
+                        <v-col cols="12">
+                          <v-text-field
+                            v-model="nombre"
+                            :rules="nombreRules"
+                            prepend-icon="mdi-store"
+                            label="Nombre Comercial / Marca *"
+                            required
+                          ></v-text-field
+                        ></v-col>
+                        <v-col cols="12">
+                          <v-text-field
+                            v-model="eslogan"
+                            label="Eslogan o una breve descripción del Negocio *"
+                            :rules="esloganRules"
+                            prepend-icon="mdi-bullhorn"
+                            required
+                          >
+                          </v-text-field>
+                        </v-col>
+                        <v-col cols="12">
+                          <v-text-field
+                            v-model="correo"
+                            :rules="correoRules"
+                            label="Correo electrónico *"
+                            prepend-icon="mdi-email"
+                            required
+                          ></v-text-field>
+                        </v-col>
+
+                        <!--    <v-col cols="12">
+                      <v-text-field
+                        v-model="direccion"
+                        prepend-icon="mdi-compass"
+                        label="Dirección"
+                        :rules="direccionRules"
+                        required
+                      ></v-text-field>
+                    </v-col>
+ -->
+                        <v-col cols="12">
+                          <v-container>
+                            <v-row>
+                              <v-col cols="12" md="5">
+                                <v-text-field
+                                  v-model="nuevoTelefono"
+                                  prepend-icon="mdi-phone"
+                                  label="Teléfono *"
+                                ></v-text-field>
+                              </v-col>
+                              <v-col cols="12" md="5">
+                                <v-radio-group v-model="tipoNuevoTelefono">
+                                  <v-radio
+                                    v-for="n in 3"
+                                    :key="n"
+                                    :label="`${labelTelefonos[n - 1]}`"
+                                    :value="n"
+                                  ></v-radio> </v-radio-group></v-col
+                              ><v-col cols="12" md="2">
+                                <v-btn
+                                  class="mx-2"
+                                  fab
+                                  dark
+                                  color="indigo"
+                                  @click="agregarTelefono"
+                                >
+                                  <v-icon dark> mdi-plus </v-icon>
+                                </v-btn>
+                              </v-col></v-row
+                            >
+                            <v-row>
+                              <v-col>
+                                <v-chip-group column>
+                                  <v-chip
+                                    v-for="(fono, index) in telefonos"
+                                    v-bind:key="index"
+                                    class="ma-2"
+                                    :color="
+                                      fono.tipoTelefono == 0
+                                        ? 'blue darken-4'
+                                        : fono.tipoTelefono == 1
+                                        ? 'green darken-4'
+                                        : fono.tipoTelefono == 1
+                                        ? 'teal'
+                                        : 'red'
+                                    "
+                                    text-color="white"
+                                    close
+                                    @click:close="quitarTelefono(fono.telefono)"
+                                  >
+                                    {{ fono.telefono }}
+                                  </v-chip>
+                                </v-chip-group>
+                              </v-col>
+                            </v-row>
+                          </v-container>
+                        </v-col>
+
+                        <!--  <v-col cols="12">
+                          <v-container>
+                            <v-row>
+                              <v-col cols="12" md="5">
+                                <v-text-field
+                                  v-model="nuevaRed"
+                                  prepend-icon="mdi-earth"
+                                  label="Link de Redes Sociales"
+                                ></v-text-field>
+                              </v-col>
+                              <v-col cols="12" md="5">
+                                <v-select
+                                  v-model="nuevoTipoRed"
+                                  :items="tiposRedes"
+                                  item-text="nombreTipoRed"
+                                  item-key="nuevoTipoRed"
+                                  item-value="id_tipoRS"
+                                  label="Red Social"
+                                  prepend-icon="mdi-link-variant"
+                                ></v-select> </v-col
+                              ><v-col cols="12" md="2">
+                                <v-btn
+                                  class="mx-2"
+                                  fab
+                                  dark
+                                  color="indigo"
+                                  @click="agregarRedSocial"
+                                >
+                                  <v-icon dark> mdi-plus </v-icon>
+                                </v-btn>
+                              </v-col></v-row
+                            >
+                            <v-row>
+                              <v-col>
+                                <v-chip-group column>
+                                  <v-chip
+                                    v-for="(red, index) in redesSociales"
+                                    v-bind:key="index"
+                                    class="ma-2"
+                                    color="red"
+                                    text-color="white"
+                                    close
+                                    @click:close="quitarRed(red.urlRedSocial)"
+                                    ><v-avatar left>
+                                      <v-icon>{{
+                                        tiposRedes[nuevoTipoRed - 1]
+                                          .observaciones
+                                      }}</v-icon>
+                                    </v-avatar>
+                                    {{ red.urlRedSocial }}
+                                  </v-chip>
+                                </v-chip-group>
+                              </v-col>
+                            </v-row>
+                          </v-container>
+                        </v-col> -->
+
+                        <v-col cols="12" md="6">
+                          <v-select
+                            v-on:change="changeCiudad"
+                            v-model="provincia"
+                            :items="provincias"
+                            item-text="nombreProv"
+                            item-key="provincia"
+                            item-value="id_provincia"
+                            label="Provincia"
+                            prepend-icon="mdi-map"
+                          ></v-select>
+                        </v-col>
+                        <v-col cols="12" md="6">
+                          <v-select
+                            v-model="ciudad"
+                            :items="ciudades"
+                            item-text="nombreCiu"
+                            item-key="ciudades"
+                            item-value="id_ciudad"
+                            label="Ciudad"
+                            prepend-icon="mdi-map-marker"
+                          ></v-select>
+                        </v-col>
+
+                        <!--  <v-col cols="12">
+                          <v-select
+                            v-on:change="changeCategoria"
+                            v-model="tipoComercio"
+                            :items="tiposComercio"
+                            item-text="nombreTipoComercio"
+                            item-key="tipoComercio"
+                            item-value="id_tipoComercio"
+                            label="Tipo de comercio"
+                            prepend-icon="mdi-map"
+                          ></v-select>
+                        </v-col>
+
+                        <v-col cols="12">
+                          <v-select
+                            v-model="categoria"
+                            :items="categorias"
+                            item-text="nombreCat"
+                            item-key="tipoComercio"
+                            item-value="id_categoria"
+                            label="Categoría"
+                            prepend-icon="mdi-map-marker"
+                          ></v-select>
+                        </v-col> -->
+
+                        <!--   <v-col cols="12">
+                          <v-file-input
+                            accept="image/*"
+                            label="Subir Logo"
+                            v-model="file"
+                            @change="uploadImage"
+                          ></v-file-input>
+                        </v-col>
+                        <v-col cols="12">
+                          <v-img
+                            max-height="150"
+                            max-width="250"
+                            :src="url"
+                          ></v-img>
+                        </v-col> -->
+                      </v-row>
+                    </v-form>
+                  </v-container></v-card
+                >
+
+                <v-btn color="primary" @click="subirImagen">
+                  Registrarse
+                </v-btn>
+
+                <v-btn text> Cancel </v-btn>
+              </v-stepper-content>
+
+              <v-stepper-content step="3">
+                <v-card class="mb-12">
+                  <v-col cols="12">
+                    <v-file-input
+                      accept="image/*"
+                      label="Subir Logo"
+                      v-model="file"
+                      @change="uploadImage"
+                    ></v-file-input>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-img
+                      max-height="150"
+                      max-width="250"
+                      :src="url"
+                    ></v-img> </v-col
+                ></v-card>
+
+                <v-btn color="primary" @click="e1 = 1"> Continue </v-btn>
+
+                <v-btn text> Cancel </v-btn>
+              </v-stepper-content>
+            </v-stepper-items>
+          </v-stepper>
+        </v-col>
+      </v-row>
+    </v-container>
+    <!-- <div>
       <v-container>
         <v-card class="elevation-12">
           <v-toolbar dark color="primary">
@@ -9,204 +325,221 @@
           <v-card-text>
             <v-container>
               <v-form ref="form" v-model="valid" lazy-validation>
-                <v-text-field
-                  v-model="nombre"
-                  :rules="nombreRules"
-                  prepend-icon="mdi-store"
-                  label="Nombre"
-                  required
-                ></v-text-field>
+                <v-row>
+                  <v-col cols="12">
+                    <v-text-field
+                      v-model="nombre"
+                      :rules="nombreRules"
+                      prepend-icon="mdi-store"
+                      label="Nombre"
+                      required
+                    ></v-text-field
+                  ></v-col>
+                  <v-col cols="12">
+                    <v-text-field
+                      v-model="eslogan"
+                      label="Eslogan"
+                      :rules="esloganRules"
+                      prepend-icon="mdi-bullhorn"
+                      required
+                    >
+                    </v-text-field>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-text-field
+                      v-model="correo"
+                      :rules="correoRules"
+                      label="Correo"
+                      prepend-icon="mdi-email"
+                      required
+                    ></v-text-field>
+                  </v-col>
 
-                <v-text-field
-                  v-model="eslogan"
-                  label="Eslogan"
-                  :rules="esloganRules"
-                  prepend-icon="mdi-bullhorn"
-                  required
-                >
-                </v-text-field>
+                  <v-col cols="12">
+                    <v-text-field
+                      v-model="direccion"
+                      prepend-icon="mdi-compass"
+                      label="Dirección"
+                      :rules="direccionRules"
+                      required
+                    ></v-text-field>
+                  </v-col>
 
-                <v-text-field
-                  v-model="correo"
-                  :rules="correoRules"
-                  label="Correo"
-                  prepend-icon="mdi-email"
-                  required
-                ></v-text-field>
-
-                <v-text-field
-                  v-model="direccion"
-                  prepend-icon="mdi-compass"
-                  label="Dirección"
-                  :rules="direccionRules"
-                  required
-                ></v-text-field>
-                <v-container>
-                  <v-row>
-                    <v-col cols="12" md="5">
-                      <v-text-field
-                        v-model="nuevoTelefono"
-                        prepend-icon="mdi-phone"
-                        label="Telefono"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="5">
-                      <v-radio-group v-model="tipoNuevoTelefono">
-                        <v-radio
-                          v-for="n in 3"
-                          :key="n"
-                          :label="`${labelTelefonos[n - 1]}`"
-                          :value="n"
-                        ></v-radio> </v-radio-group></v-col
-                    ><v-col cols="12" md="2">
-                      <v-btn
-                        class="mx-2"
-                        fab
-                        dark
-                        color="indigo"
-                        @click="agregarTelefono"
+                  <v-col cols="12">
+                    <v-container>
+                      <v-row>
+                        <v-col cols="12" md="5">
+                          <v-text-field
+                            v-model="nuevoTelefono"
+                            prepend-icon="mdi-phone"
+                            label="Telefono"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" md="5">
+                          <v-radio-group v-model="tipoNuevoTelefono">
+                            <v-radio
+                              v-for="n in 3"
+                              :key="n"
+                              :label="`${labelTelefonos[n - 1]}`"
+                              :value="n"
+                            ></v-radio> </v-radio-group></v-col
+                        ><v-col cols="12" md="2">
+                          <v-btn
+                            class="mx-2"
+                            fab
+                            dark
+                            color="indigo"
+                            @click="agregarTelefono"
+                          >
+                            <v-icon dark> mdi-plus </v-icon>
+                          </v-btn>
+                        </v-col></v-row
                       >
-                        <v-icon dark> mdi-plus </v-icon>
-                      </v-btn>
-                    </v-col></v-row
-                  >
-                  <v-row>
-                    <v-col>
-                      <v-chip-group column>
-                        <v-chip
-                          v-for="(fono, index) in telefonos"
-                          v-bind:key="index"
-                          class="ma-2"
-                          :color="
-                            fono.tipoTelefono == 0
-                              ? 'blue darken-4'
-                              : fono.tipoTelefono == 1
-                              ? 'green darken-4'
-                              : fono.tipoTelefono == 1
-                              ? 'teal'
-                              : 'red'
-                          "
-                          text-color="white"
-                          close
-                          @click:close="quitarTelefono(fono.telefono)"
-                        >
-                          {{ fono.telefono }}
-                        </v-chip>
-                      </v-chip-group>
-                    </v-col>
-                  </v-row>
-                </v-container>
-                <v-container>
-                  <v-row>
-                    <v-col cols="12" md="5">
-                      <v-text-field
-                        v-model="nuevaRed"
-                        prepend-icon="mdi-earth"
-                        label="Link de Redes Sociales"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="5">
-                      <v-select
-                        v-model="nuevoTipoRed"
-                        :items="tiposRedes"
-                        item-text="nombreTipoRed"
-                        item-key="nuevoTipoRed"
-                        item-value="id_tipoRS"
-                        label="Red Social"
-                        prepend-icon="mdi-link-variant"
-                      ></v-select>
+                      <v-row>
+                        <v-col>
+                          <v-chip-group column>
+                            <v-chip
+                              v-for="(fono, index) in telefonos"
+                              v-bind:key="index"
+                              class="ma-2"
+                              :color="
+                                fono.tipoTelefono == 0
+                                  ? 'blue darken-4'
+                                  : fono.tipoTelefono == 1
+                                  ? 'green darken-4'
+                                  : fono.tipoTelefono == 1
+                                  ? 'teal'
+                                  : 'red'
+                              "
+                              text-color="white"
+                              close
+                              @click:close="quitarTelefono(fono.telefono)"
+                            >
+                              {{ fono.telefono }}
+                            </v-chip>
+                          </v-chip-group>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-col>
 
-                      <!--  <v-select
-                  v-on:change="changeCiudad"
-                  v-model="provincia"
-                  :items="provincias"
-                  item-text="nombreProv"
-                  item-key="provincia"
-                  item-value="id_provincia"
-                  label="Provincia"
-                  prepend-icon="mdi-map"
-                ></v-select> --> </v-col
-                    ><v-col cols="12" md="2">
-                      <v-btn
-                        class="mx-2"
-                        fab
-                        dark
-                        color="indigo"
-                        @click="agregarRedSocial"
+                  <v-col cols="12">
+                    <v-container>
+                      <v-row>
+                        <v-col cols="12" md="5">
+                          <v-text-field
+                            v-model="nuevaRed"
+                            prepend-icon="mdi-earth"
+                            label="Link de Redes Sociales"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" md="5">
+                          <v-select
+                            v-model="nuevoTipoRed"
+                            :items="tiposRedes"
+                            item-text="nombreTipoRed"
+                            item-key="nuevoTipoRed"
+                            item-value="id_tipoRS"
+                            label="Red Social"
+                            prepend-icon="mdi-link-variant"
+                          ></v-select> </v-col
+                        ><v-col cols="12" md="2">
+                          <v-btn
+                            class="mx-2"
+                            fab
+                            dark
+                            color="indigo"
+                            @click="agregarRedSocial"
+                          >
+                            <v-icon dark> mdi-plus </v-icon>
+                          </v-btn>
+                        </v-col></v-row
                       >
-                        <v-icon dark> mdi-plus </v-icon>
-                      </v-btn>
-                    </v-col></v-row
-                  >
-                  <v-row>
-                    <v-col>
-                      <v-chip-group column>
-                        <v-chip
-                          v-for="(red, index) in redesSociales"
-                          v-bind:key="index"
-                          class="ma-2"
-                          color="red"
-                          text-color="white"
-                          close
-                          @click:close="quitarRed(red.urlRedSocial)"
-                          ><v-avatar left>
-                            <v-icon>{{
-                              tiposRedes[nuevoTipoRed - 1].observaciones
-                            }}</v-icon>
-                          </v-avatar>
-                          {{ red.urlRedSocial }}
-                        </v-chip>
-                      </v-chip-group>
-                    </v-col>
-                  </v-row>
-                </v-container>
-                <v-select
-                  v-on:change="changeCiudad"
-                  v-model="provincia"
-                  :items="provincias"
-                  item-text="nombreProv"
-                  item-key="provincia"
-                  item-value="id_provincia"
-                  label="Provincia"
-                  prepend-icon="mdi-map"
-                ></v-select>
-                <v-select
-                  v-model="ciudad"
-                  :items="ciudades"
-                  item-text="nombreCiu"
-                  item-key="ciudades"
-                  item-value="id_ciudad"
-                  label="Ciudad"
-                  prepend-icon="mdi-map-marker"
-                ></v-select>
+                      <v-row>
+                        <v-col>
+                          <v-chip-group column>
+                            <v-chip
+                              v-for="(red, index) in redesSociales"
+                              v-bind:key="index"
+                              class="ma-2"
+                              color="red"
+                              text-color="white"
+                              close
+                              @click:close="quitarRed(red.urlRedSocial)"
+                              ><v-avatar left>
+                                <v-icon>{{
+                                  tiposRedes[nuevoTipoRed - 1].observaciones
+                                }}</v-icon>
+                              </v-avatar>
+                              {{ red.urlRedSocial }}
+                            </v-chip>
+                          </v-chip-group>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-col>
 
-                <v-select
-                  v-on:change="changeCategoria"
-                  v-model="tipoComercio"
-                  :items="tiposComercio"
-                  item-text="nombreTipoComercio"
-                  item-key="tipoComercio"
-                  item-value="id_tipoComercio"
-                  label="Tipo de comercio"
-                  prepend-icon="mdi-map"
-                ></v-select>
+                  <v-col cols="12">
+                    <v-select
+                      v-on:change="changeCiudad"
+                      v-model="provincia"
+                      :items="provincias"
+                      item-text="nombreProv"
+                      item-key="provincia"
+                      item-value="id_provincia"
+                      label="Provincia"
+                      prepend-icon="mdi-map"
+                    ></v-select>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-select
+                      v-model="ciudad"
+                      :items="ciudades"
+                      item-text="nombreCiu"
+                      item-key="ciudades"
+                      item-value="id_ciudad"
+                      label="Ciudad"
+                      prepend-icon="mdi-map-marker"
+                    ></v-select>
+                  </v-col>
 
-                <v-select
-                  v-model="categoria"
-                  :items="categorias"
-                  item-text="nombreCat"
-                  item-key="tipoComercio"
-                  item-value="id_categoria"
-                  label="Categoría"
-                  prepend-icon="mdi-map-marker"
-                ></v-select>
+                  <v-col cols="12">
+                    <v-select
+                      v-on:change="changeCategoria"
+                      v-model="tipoComercio"
+                      :items="tiposComercio"
+                      item-text="nombreTipoComercio"
+                      item-key="tipoComercio"
+                      item-value="id_tipoComercio"
+                      label="Tipo de comercio"
+                      prepend-icon="mdi-map"
+                    ></v-select>
+                  </v-col>
 
-                <div>
-                  <p>Logo</p>
-                  <input @change="uploadImage" type="file" accept="image/*" />
-                </div>
+                  <v-col cols="12">
+                    <v-select
+                      v-model="categoria"
+                      :items="categorias"
+                      item-text="nombreCat"
+                      item-key="tipoComercio"
+                      item-value="id_categoria"
+                      label="Categoría"
+                      prepend-icon="mdi-map-marker"
+                    ></v-select>
+                  </v-col>
 
-                <!-- <uploadImage></uploadImage> -->
+                  <v-col cols="12">
+                    <v-file-input
+                      accept="image/*"
+                      label="Subir Logo"
+                      v-model="file"
+                      @change="uploadImage"
+                    ></v-file-input>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-img max-height="150" max-width="250" :src="url"></v-img>
+                  </v-col>
+                </v-row>
               </v-form>
             </v-container>
           </v-card-text>
@@ -217,7 +550,7 @@
           </v-card-actions>
         </v-card>
       </v-container>
-    </div>
+    </div> -->
     <v-alert v-if="error" type="error">
       {{ error_msg }}
     </v-alert>
@@ -236,6 +569,84 @@ export default {
   name: 'RegistrarComercio',
   middleware: ['auth', 'tieneTienda'],
   data: () => ({
+    idItem: null,
+    active: [],
+    open: [],
+
+    items: [
+      {
+        id: 1,
+        name: 'Applications :',
+        children: [
+          { id: 2, name: 'Calendar : app' },
+          { id: 3, name: 'Chrome : app' },
+          { id: 4, name: 'Webstorm : app' },
+        ],
+      },
+      {
+        id: 5,
+        name: 'Documents :',
+        children: [
+          {
+            id: 6,
+            name: 'vuetify :',
+            children: [
+              {
+                id: 7,
+                name: 'src :',
+                children: [
+                  { id: 8, name: 'index : ts' },
+                  { id: 9, name: 'bootstrap : ts' },
+                ],
+              },
+            ],
+          },
+          {
+            id: 10,
+            name: 'material2 :',
+            children: [
+              {
+                id: 11,
+                name: 'src :',
+                children: [
+                  { id: 12, name: 'v-btn : ts' },
+                  { id: 13, name: 'v-card : ts' },
+                  { id: 14, name: 'v-window : ts' },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: 15,
+        name: 'Downloads :',
+        children: [
+          { id: 16, name: 'October : pdf' },
+          { id: 17, name: 'November : pdf' },
+          { id: 18, name: 'Tutorial : html' },
+        ],
+      },
+      {
+        id: 19,
+        name: 'Videos :',
+        children: [
+          {
+            id: 20,
+            name: 'Tutorials :',
+            children: [
+              { id: 21, name: 'Basic layouts : mp4' },
+              { id: 22, name: 'Advanced techniques : mp4' },
+              { id: 23, name: 'All about app : dir' },
+            ],
+          },
+          { id: 24, name: 'Intro : mov' },
+          { id: 25, name: 'Conference introduction : avi' },
+        ],
+      },
+    ],
+    e1: 1,
+    url: null,
     auxiliares: null,
     valid: true,
     nombre: '',
@@ -457,7 +868,8 @@ export default {
       )
     },
     uploadImage(e) {
-      this.file = e.target.files[0]
+      this.url = URL.createObjectURL(this.file)
+      // alert(this.file)
     },
     agregarTelefono() {
       this.telefonos.push({
