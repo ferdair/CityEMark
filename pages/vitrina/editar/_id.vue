@@ -2,48 +2,8 @@
   <v-app>
     <v-container>
       <v-row>
-        <v-col v-for="producto in productos" :key="producto.id_producto">
-          <v-card elevation="24" max-width="444" class="mx-auto">
-            <!-- <v-system-bar lights-out></v-system-bar> -->
-            <v-carousel
-              :continuous="false"
-              :cycle="cycle"
-              :show-arrows="false"
-              hide-delimiter-background
-              delimiter-icon="mdi-minus"
-              height="300"
-            >
-            <!--   <v-carousel-item
-                v-for="(producto.imagenes,index) in producto"
-                :key="index"
-              >
-                <v-row class="fill-height" align="center" justify="center">
-                  <div class="display-3">{{ slide }} Slide</div>
-                </v-row>
-              </v-carousel-item> -->
-            </v-carousel>
-            <v-list two-line>
-              <v-list-item>
-                <v-list-item-avatar>
-                  <v-img
-                    src="https://cdn.vuetifyjs.com/images/john.png"
-                  ></v-img>
-                </v-list-item-avatar>
-                <v-list-item-content>
-                  <v-list-item-title>John Leider</v-list-item-title>
-                  <v-list-item-subtitle>Author</v-list-item-subtitle>
-                </v-list-item-content>
-                <v-list-item-action>
-                  <v-switch
-                    v-model="cycle"
-                    label="Cycle Slides"
-                    inset
-                  ></v-switch>
-                </v-list-item-action>
-              </v-list-item>
-            </v-list>
-          </v-card>
-          <!--  <v-simple-table dark>
+        <v-col>
+          <v-simple-table dark>
             <template v-slot:default>
               <thead>
                 <tr>
@@ -51,11 +11,12 @@
                   <th class="text-left">Descripcion</th>
                   <th class="text-left">Tipo de producto</th>
                   <th class="text-left">PVP</th>
-                  <th class="text-left">Precio por mayor</th>
+                  <!-- <th class="text-left">Precio por mayor</th>
                   <th class="text-left">Minimo por mayor</th>
-                  <th class="text-left">precio vendedores</th>
+                  <th class="text-left">precio vendedores</th> -->
                   <th class="text-left">Cantidad disponible</th>
-                  <th class="text-left">Tiempo entrega</th>
+                  <!--                   <th class="text-left">Tiempo entrega</th>
+ -->
                   <th class="text-left">
                     <v-row justify="center">
                       <v-dialog v-model="dialog" persistent max-width="800px">
@@ -77,7 +38,6 @@
                               >
                                 <v-row>
                                   <v-col cols="12" sm="6" md="4">
-                                  
                                     <v-text-field
                                       label="Nombre"
                                       required
@@ -114,7 +74,7 @@
                                       required
                                     ></v-text-field>
                                   </v-col>
-                                  <v-col cols="12" sm="6" md="4">
+                                  <!--  <v-col cols="12" sm="6" md="4">
                                     <v-text-field
                                       label="precio Por Mayor*"
                                       hint="Ejemplo: 4.00"
@@ -143,7 +103,7 @@
                                       required
                                       type="number"
                                     ></v-text-field>
-                                  </v-col>
+                                  </v-col> -->
                                   <v-col cols="12" sm="6" md="4">
                                     <v-text-field
                                       label="cantidad Disponible"
@@ -154,7 +114,7 @@
                                       type="number"
                                     ></v-text-field>
                                   </v-col>
-                                  <v-col cols="12" sm="6" md="4">
+                                  <!--    <v-col cols="12" sm="6" md="4">
                                     <v-text-field
                                       label="tiempo de Entrega"
                                       hint="En horas"
@@ -163,7 +123,7 @@
                                       required
                                       type="number"
                                     ></v-text-field>
-                                  </v-col>
+                                  </v-col> -->
                                   <v-col cols="12" sm="6" md="4">
                                     <p>Logo</p>
                                     <input
@@ -201,11 +161,12 @@
                   <td>{{ item.descripcion }}</td>
                   <td>{{ item.nombreTipoProducto }}</td>
                   <td>{{ item.precioPVP }}</td>
-                  <td>{{ item.precioPorMayor }}</td>
+                  <!--   <td>{{ item.precioPorMayor }}</td>
                   <td>{{ item.minimoPorMayor }}</td>
-                  <td>{{ item.precioVendedores }}</td>
+                  <td>{{ item.precioVendedores }}</td> -->
                   <td>{{ item.cantDisponible }}</td>
-                  <td>{{ item.tiempoEntregaHoras }}</td>
+                  <!--                   <td>{{ item.tiempoEntregaHoras }}</td>
+ -->
                   <td>
                     <v-btn-toggle>
                       <v-btn @click="editar(item.id_producto)"
@@ -221,16 +182,7 @@
                 </tr>
               </tbody>
             </template>
-          </v-simple-table> -->
-
-          <v-card>
-            <v-img :src="img" height="200px"></v-img>
-
-            <v-card-title> {{ nombre }} </v-card-title>
-            <v-divider></v-divider>
-
-            <v-card-text> Stock: {{ stock }} </v-card-text>
-          </v-card>
+          </v-simple-table>
         </v-col>
       </v-row>
     </v-container>
