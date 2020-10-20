@@ -13,7 +13,7 @@
         <v-carousel-item
           v-for="(img, i) in imgs"
           :key="i"
-          :src="img"
+          :src="img.url_imagen"
           reverse-transition="fade-transition"
           transition="fade-transition"
         ></v-carousel-item>

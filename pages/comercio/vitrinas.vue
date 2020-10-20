@@ -26,21 +26,42 @@
             :id="vitrina.id_vitrina"
             :nombre="vitrina.nombreVitrina"
             :descripcion="vitrina.descripcion"
-            v-bind:imgs="[
-              'https://cdn.vuetifyjs.com/images/carousel/sky.jpg',
-              'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg',
-            ]"
+            v-bind:imgs="vitrina.imagenes"
           ></VitrinaCorrousel>
         </v-col>
         <v-col cols="8">
-          <ProductoCorrousel
-            v-for="producto in productos"
-            :key="producto.id_producto"
-            :id="producto.id_producto"
-            :nombre="producto.nombreProducto"
-            :descripcion="producto.descripcion"
-            v-bind:imgs="producto.imagenes"
-          ></ProductoCorrousel>
+          <v-sheet class="mx-auto" elevation="8" max-width="800">
+            <v-slide-group class="pa-4" active-class="success" show-arrows>
+              <v-slide-item>
+                <v-card
+                  :to="`../vitrina/editar/1`"
+                  nuxt
+                  link
+                  width="150"
+                  color="grey lighten-1"
+                >
+                  <v-row class="fill-height" align="center" justify="center">
+                    <v-icon
+                      color="primary"
+                      size="48"
+                      v-text="'mdi-close-circle-outline'"
+                    ></v-icon>
+                  </v-row>
+                </v-card>
+              </v-slide-item>
+              <v-slide-item
+                v-for="producto in vitrina.productos"
+                :key="producto.id_producto"
+              >
+                <ProductoCorrousel
+                  :id="producto.id_producto"
+                  :nombre="producto.nombreProducto"
+                  :descripcion="producto.descripcion"
+                  v-bind:imgs="producto.imagenes"
+                ></ProductoCorrousel>
+              </v-slide-item>
+            </v-slide-group>
+          </v-sheet>
         </v-col>
       </v-row>
     </v-container>
@@ -76,18 +97,24 @@ export default {
       env.endpoint + '/vitrinaComercio.php?id=' + this.loggedInUser.idComercio
     )
     this.vitrinas = data.filter((m) => m.estado === 0)
-    // alert(JSON.stringify(data.filter((m) => m.estado === 0)))
-    // alert(this.vitrinas[0].nombreVitrina)
 
-    const pr = await axios.get(
+    const response = await axios.get(
       env.endpoint + '/producto.php?id=' + this.loggedInUser.idComercio
     )
 
     // estado en producto 1 es activo
-    const filt = pr.data.data.filter((p) => p.estado === 1)
-    this.productos = filt
 
-    console.log(filt)
+    // estado 0 es activo
+
+    this.vitrinas.forEach((element) => {
+      const filt = response.data.data.filter(
+        (p) => p.vitrina === element.id_vitrina && p.estado === 1
+      )
+      element.productos = filt
+    })
+    console.log(response.data.data)
+
+    console.log(this.vitrinas)
   },
 }
 </script>

@@ -84,7 +84,6 @@
                   </v-col>
                   <v-col cols="12" md="6">
                     <v-select
-                      v-on:change="changeCiudad2"
                       v-model="ciudad"
                       :items="ciudades"
                       item-text="nombreCiu"
@@ -236,9 +235,6 @@ export default {
       this.ciudades = this.aux.ciudad.filter(
         (m) => m.provincia === this.provincia
       )
-    },
-    changeCiudad2() {
-      alert(this.ciudad)
     },
   },
 }

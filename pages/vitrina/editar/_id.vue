@@ -235,6 +235,7 @@ export default {
 
     // estado 0 es activo
     const tp = await axios.get(env.endpoint + '/tipoProducto.php')
+
     this.tipoProducto = tp.data.data.filter((p) => p.estado === 0)
   },
   computed: {
@@ -301,11 +302,11 @@ export default {
               /* eslint-enable */
 
               this.picture = downloadURL
+              this.registrar()
             })
           }
         )
       }
-      this.registrar()
     },
     async registrar() {
       console.log(this.editedIndex)
@@ -327,7 +328,11 @@ export default {
         /* eslint-enable */
         if (np.data.code === 200) {
           const _id = this.$route.params.id
-
+          if (this.picture === '') {
+            setTimeout(() => {
+              console.log('esperando')
+            }, 5000)
+          }
           const im = {
             url_imgProducto: this.picture,
             idProducto: np.data.data[0].id_producto,
