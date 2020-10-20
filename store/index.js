@@ -25,6 +25,9 @@ export const mutations = {
   SET_USER(state, mutation) {
     state.auth.user = mutation
   },
+  SET_UComercio(state, mutation) {
+    state.auth.user.idComercio = mutation
+  },
 }
 
 export const actions = {

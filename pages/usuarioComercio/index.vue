@@ -12,26 +12,17 @@
                 ></v-card-title>
                 <v-card-subtitle v-text="tienda.eslogan"></v-card-subtitle>
 
-                <!--   <v-btn
-                  class="ml-2 mt-5"
-                  outlined
-                  rounded
-                  small
-                  to="/comercio/editar"
-                  nuxt
-                >
-                  <v-icon left> mdi-eye </v-icon>
-                  Datos de la empresa
-                </v-btn> -->
-                <v-btn
-                  to="/comercio/editar"
-                  nuxt
-                  class="ml-2 mt-5"
-                  outlined
-                  rounded
-                  small
-                  >Editar Cuenta
-                </v-btn>
+                <v-card-actions>
+                  <v-btn
+                    to="/comercio/editarComercio"
+                    nuxt
+                    class="ml-2 mt-5"
+                    outlined
+                    rounded
+                    small
+                    >Editar Cuenta
+                  </v-btn>
+                </v-card-actions>
               </div>
 
               <v-avatar class="ma-3" size="125" tile>

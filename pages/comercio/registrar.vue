@@ -496,7 +496,11 @@ export default {
         if (patchUser.data.code === 200) {
           this.error = true
           this.error_msg = patchUser.data.message
-          // this.loggedInUser.idComercio = data.data.data[0].id
+
+          this.$store.commit('SET_UComercio', data.data.data[0].idComercio)
+
+          // this.SET_UComercio(data.data.data[0].idComercio)
+          // this.loggedInUser.idComercio = data.data.data[0].idComercio
           location.replace('/usuarioComercio')
         } else {
           this.error = true

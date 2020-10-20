@@ -210,16 +210,20 @@
 
 <script>
 import axios from 'axios'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 // import uploadImage from '../../components/uploadImage.vue'
 // import firebase from 'firebase'
 
 import env from '../../config/env'
 
 export default {
-  name: 'RegistrarComercio',
-  middleware: ['auth', 'tieneTienda'],
+  name: 'EditarComercio',
+  layout: 'usuarioComercio',
+  middleware: ['auth'],
   data: () => ({
+    auxteleli: [],
+    auxtel: [],
+    auxurl: null,
     e1: 1,
     url: null,
     auxiliares: null,
@@ -275,10 +279,6 @@ export default {
 
     this.auxiliares = data
 
-    /* this.provincias = this.getAux.provincia.filter(
-      (m) => m.nombreProv !== 'No State'
-    ) */
-
     this.provincias = this.auxiliares.provincia.filter(
       (m) => m.nombreProv !== 'No State'
     )
@@ -291,12 +291,54 @@ export default {
       env.endpoint + '/redesComercio.php?id=tipoRedSocial'
     )
     this.tiposRedes = redessoc.data.data
+  },
+  async mounted() {
+    const com = await axios.get(
+      env.endpoint + '/datosComercio.php?id=' + this.loggedInUser.idComercio
+    )
 
-    /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
-    /*     console.warn(this.getAux.provincia)
-     */
+    const tel = await axios.get(
+      env.endpoint + '/telefonoComercio.php?id=' + com.data.data[0].id
+    )
+
+    this.tipoComercio = com.data.data[0].idTipoComercio
+    this.categoria = com.data.data[0].idCategoria
+    this.nombre = com.data.data[0].nombre
+    this.eslogan = com.data.data[0].eslogan
+
+    this.correo = com.data.data[0].correo
+
+    this.provincia = this.auxiliares.ciudad.find(
+      (ciud) => ciud.id_ciudad === com.data.data[0].idCiudad
+    ).provincia
+    this.ciudad = com.data.data[0].idCiudad
+
+    this.url = com.data.data[0].imagenLogo
+    this.auxurl = com.data.data[0].imagenLogo
+    this.changeCategoria()
+    this.changeCiudad()
+    // tel.data.data.telefono = tel.data.data.numeroTelefono
+
+    tel.data.data.forEach((element) => {
+      this.telefonos.push({
+        id: element.id_telefono,
+        estado: element.estado,
+        telefono: element.numeroTelefono,
+        idComercio: element.idComercio,
+        tipoTelefono: element.tipoTelefono,
+      })
+    })
+
+    // estado activo = 0
+    this.telefonos = this.telefonos.filter((e) => e.estado === 0)
+
+    this.auxtel = new Set(this.telefonos.map((a) => a.telefono))
+    this.auxteleli = new Set()
+
+    // this.telefonos = tel.data.data
   },
   methods: {
+    ...mapMutations(['SET_UComercio']),
     validate() {
       this.$refs.form.validate()
     },
@@ -307,52 +349,79 @@ export default {
       this.$refs.form.resetValidation()
     },
     subirImagen() {
-      const nombre = Date.now()
-      /*eslint-disable */
-      var storageRef = this.$fireStorageObj().ref().child(`logos/${nombre}`)
+      try {
+        const nombre = Date.now()
+        /*eslint-disable */
+        var storageRef = this.$fireStorageObj().ref().child(`logos/${nombre}`)
 
-      var uploadTask = storageRef.put(this.file)
-      /* eslint-enable */
+        var uploadTask = storageRef.put(this.file)
+        /* eslint-enable */
 
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-          /*eslint-disable */
+        uploadTask.on(
+          'state_changed',
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            /*eslint-disable */
 
-          console.log('Upload is ' + progress + '% done')
-          /* eslint-enable */
-        },
-        (error) => {
-          /* this.error = true
+            console.log('Upload is ' + progress + '% done')
+            /* eslint-enable */
+          },
+          (error) => {
+            /* this.error = true
           this.error_msg = JSON.stringify(error.message)
 
           */
-          /*eslint-disable */
-
-          console.log(error)
-          /* eslint-enable */
-        },
-        () => {
-          // Handle successful uploads on complete
-          // For instance, get the download URL: https://firebasestorage.googleapis.com/...
-          uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
             /*eslint-disable */
 
-            console.log('File available at', downloadURL)
-            console.log(downloadURL)
+            console.log(error)
             /* eslint-enable */
+          },
+          () => {
+            // Handle successful uploads on complete
+            // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+            uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+              /*eslint-disable */
 
-            this.picture = downloadURL
+              console.log('File available at', downloadURL)
+              console.log(downloadURL)
+              /* eslint-enable */
 
-            this.registrar()
-          })
-        }
-      )
+              this.picture = downloadURL
+
+              this.registrar()
+            })
+          }
+        )
+      } catch (error) {
+        alert('Subiendo imagen' + error)
+        this.url = this.auxurl
+        this.registrar()
+      }
     },
     async registrar() {
+      /* {
+ "id": "2",
+ "nombre": "Tixiki Licores",
+ "eslogan": "Licores Premium 24 horas",
+ "correo": "tixiki@espe.edu.ec",
+ "direccion": "Latacunga cerca al Terminal Terrestre",
+ "ubicacionGPS": "-0.987,78.95",
+ "estado": 1,
+ "ciudad": 3,
+ "tipoComercio": 0,
+ "imagenLogo": "url Imagen",
+ "centroComercial": 1,
+ "numeroLocal": 0,
+ "categoria": 0,
+ "palabrasClave": "",
+ "vendedores": 1,
+ "observaciones": "",
+ "tipoInterno": 1
+} */
+
       const json = {
+        id: this.loggedInUser.idComercio,
         nombre: this.nombre,
         eslogan: this.eslogan,
         correo: this.correo,
@@ -371,51 +440,31 @@ export default {
         tipoInterno: 1,
       }
 
-      const data = await axios.post(env.endpoint + '/datosComercio.php', json)
+      const data = await axios.put(env.endpoint + '/datosComercio.php', json)
 
       if (data.data.code === 200) {
-        this.telefonos.forEach(async (element) => {
-          await axios.post(env.endpoint + '/telefonoComercio.php', {
-            numeroTelefono: element.telefono,
-            idComercio: data.data.data[0].id,
-            tipoTelefono: element.tipoTelefono,
-          })
-        })
-
-        this.redesSociales.forEach(async (element) => {
-          const a = await axios.post(env.endpoint + '/redesComercio.php', {
-            idComercio: data.data.data[0].id,
-            urlRedSocial: element.urlRedSocial,
-            idTipoRedSocial: element.idTipoRedSocial,
-          })
-
-          if (a.data.code === 200) {
-            this.error = true
-            this.error_msg = patchUser.data.message
-          } else {
-            this.error = true
-            this.error_msg = a.data.message
+        this.auxteleli.forEach((element) => {
+          if (element[0].id) {
+            axios.patch(env.endpoint + '/telefonoComercio.php', {
+              id: element[0].id,
+              campo: 'estado',
+              dato: 2,
+            })
           }
         })
 
-        const patchUser = await axios.patch(
-          env.endpoint + '/usuarioComercio.php',
-          {
-            id: this.loggedInUser.id,
-            campo: 'comercio',
-            dato: data.data.data[0].id,
+        this.telefonos.forEach((element) => {
+          if (!element.id) {
+            axios.post(env.endpoint + '/telefonoComercio.php', {
+              numeroTelefono: element.telefono,
+              idComercio: this.loggedInUser.idComercio,
+              tipoTelefono: element.tipoTelefono,
+            })
           }
-        )
-
-        if (patchUser.data.code === 200) {
-          this.error = true
-          this.error_msg = patchUser.data.message
-          // this.loggedInUser.idComercio = data.data.data[0].id
-          location.replace('/usuarioComercio')
-        } else {
-          this.error = true
-          this.error_msg = patchUser.data.message
-        }
+        })
+      } else {
+        this.error = true
+        this.error_msg = 'error'
       }
     },
     changeCiudad() {
@@ -429,7 +478,11 @@ export default {
       )
     },
     uploadImage(e) {
-      this.url = URL.createObjectURL(this.file)
+      if (this.file) {
+        this.url = URL.createObjectURL(this.file)
+      } else {
+        this.url = ''
+      }
       // alert(this.file)
     },
     agregarTelefono() {
@@ -440,6 +493,8 @@ export default {
       this.nuevoTelefono = ''
     },
     quitarTelefono(numero) {
+      const e = this.telefonos.filter((i) => i.telefono === numero)
+      this.auxteleli.add(e)
       this.telefonos = this.telefonos.filter((i) => i.telefono !== numero)
     },
     agregarRedSocial() {
