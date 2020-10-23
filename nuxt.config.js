@@ -60,7 +60,8 @@ export default {
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
   axios: {
-    baseURL: 'http://cityemark.com/server/apis',
+    baseURL: 'https://cityemark.com/server/apis',
+    https: true,
   },
 
   // Vuetify module configuration (https://go.nuxtjs.dev/config-vuetify)
