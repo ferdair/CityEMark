@@ -66,10 +66,10 @@ export default {
   },
 
   proxy: {
-    '/api': {
-      target: 'http://example.com',
+    '/server/apis/': {
+      target: 'http://cityemark.com/',
       pathRewrite: {
-        '^/api': '/',
+        '^/server/apis': '',
       },
     },
   },
