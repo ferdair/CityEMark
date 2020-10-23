@@ -37,6 +37,7 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+    '@nuxtjs/proxy',
     '@nuxtjs/auth',
     [
       '@nuxtjs/firebase',
@@ -62,6 +63,15 @@ export default {
   axios: {
     baseURL: 'https://cityemark.com/server/apis',
     https: true,
+  },
+
+  proxy: {
+    '/api': {
+      target: 'http://example.com',
+      pathRewrite: {
+        '^/api': '/',
+      },
+    },
   },
 
   // Vuetify module configuration (https://go.nuxtjs.dev/config-vuetify)
