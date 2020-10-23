@@ -57,7 +57,9 @@
                   >Editar Cuenta
                 </v-btn>
                 <v-divider class="my-3"></v-divider>
-                <v-btn depressed rounded text> Disconnect </v-btn>
+                <v-btn depressed rounded text @click="logout">
+                  Cerrar Sesión
+                </v-btn>
               </div>
             </v-list-item-content>
           </v-card>
@@ -128,6 +130,11 @@ export default {
     this.user.email = this.loggedInUser.correo
     const name = this.user.fullName.split(' ', 2)
     this.user.initials = `${name[0][0]} ${name[1][0]}`
+  },
+  methods: {
+    async logout() {
+      await this.$auth.logout()
+    },
   },
 }
 </script>

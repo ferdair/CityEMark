@@ -1,20 +1,5 @@
 <template>
   <v-app>
-    <!-- <v-container>
-      <v-row>
-        <v-col v-for="vitrina in vitrinas" :key="vitrina.id_vitrina">
-          <VitrinaCorrousel
-            :id="vitrina.id_vitrina"
-            :nombre="vitrina.nombreVitrina"
-            :descripcion="vitrina.descripcion"
-            v-bind:imgs="[
-              'https://cdn.vuetifyjs.com/images/carousel/sky.jpg',
-              'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg',
-            ]"
-          ></VitrinaCorrousel>
-        </v-col>
-      </v-row> </v-container
-  -->
     <v-container>
       <v-row>
         <v-col cols="4"> Vitrina </v-col>
@@ -33,19 +18,19 @@
           <v-sheet class="mx-auto" elevation="8" max-width="800">
             <v-slide-group class="pa-4" active-class="success" show-arrows>
               <v-slide-item>
-                <v-card
-                  :to="`../vitrina/editar/1`"
-                  nuxt
-                  link
-                  width="150"
-                  color="grey lighten-1"
-                >
+                <v-card width="150" color="grey lighten-1" max-width="200">
                   <v-row class="fill-height" align="center" justify="center">
-                    <v-icon
+                    <v-btn
+                      :to="`/vitrina/insertar/${vitrina.id_vitrina}`"
+                      nuxt
+                      class="mx-2"
+                      fab
+                      dark
+                      small
                       color="primary"
-                      size="48"
-                      v-text="'mdi-close-circle-outline'"
-                    ></v-icon>
+                    >
+                      <v-icon dark> mdi-plus </v-icon>
+                    </v-btn>
                   </v-row>
                 </v-card>
               </v-slide-item>
@@ -58,6 +43,8 @@
                   :nombre="producto.nombreProducto"
                   :descripcion="producto.descripcion"
                   v-bind:imgs="producto.imagenes"
+                  :precio="producto.precioPVP"
+                  :stock="producto.cantDisponible"
                 ></ProductoCorrousel>
               </v-slide-item>
             </v-slide-group>

@@ -224,7 +224,9 @@ export default {
           json
         )
         if (data.data.code === 200) {
-          location.replace('/login')
+          this.$router.push({
+            path: '/login',
+          })
         } else {
           this.error = true
           this.error_msg = data.data.message

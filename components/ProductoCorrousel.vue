@@ -1,6 +1,6 @@
 <template>
   <v-card
-    :to="`../vitrina/editar/${id}`"
+    :to="`../producto/editar/${id}`"
     nuxt
     link
     elevation="24"
@@ -23,6 +23,8 @@
         <v-list-item-content>
           <v-list-item-title>{{ nombre }}</v-list-item-title>
           <v-list-item-subtitle>{{ descripcion }}</v-list-item-subtitle>
+          <v-list-item-subtitle>precio: {{ precio }}</v-list-item-subtitle>
+          <v-list-item-subtitle>stock: {{ stock }}</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
     </v-list>
@@ -37,6 +39,8 @@ export default {
     nombre: String,
     descripcion: String,
     imgs: Array,
+    precio: Number,
+    stock: Number,
   },
 }
 </script>

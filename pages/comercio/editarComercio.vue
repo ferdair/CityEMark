@@ -338,7 +338,6 @@ export default {
     // this.telefonos = tel.data.data
   },
   methods: {
-    ...mapMutations(['SET_UComercio']),
     validate() {
       this.$refs.form.validate()
     },
@@ -350,52 +349,58 @@ export default {
     },
     subirImagen() {
       try {
-        const nombre = Date.now()
-        /*eslint-disable */
-        var storageRef = this.$fireStorageObj().ref().child(`logos/${nombre}`)
+        if (this.file) {
+          const nombre = Date.now()
+          /*eslint-disable */
+          var storageRef = this.$fireStorageObj().ref().child(`logos/${nombre}`)
 
-        var uploadTask = storageRef.put(this.file)
-        /* eslint-enable */
+          var uploadTask = storageRef.put(this.file)
+          /* eslint-enable */
 
-        uploadTask.on(
-          'state_changed',
-          (snapshot) => {
-            const progress =
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-            /*eslint-disable */
+          uploadTask.on(
+            'state_changed',
+            (snapshot) => {
+              const progress =
+                (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+              /*eslint-disable */
 
-            console.log('Upload is ' + progress + '% done')
-            /* eslint-enable */
-          },
-          (error) => {
-            /* this.error = true
+              console.log('Upload is ' + progress + '% done')
+              /* eslint-enable */
+            },
+            (error) => {
+              /* this.error = true
           this.error_msg = JSON.stringify(error.message)
 
           */
-            /*eslint-disable */
-
-            console.log(error)
-            /* eslint-enable */
-          },
-          () => {
-            // Handle successful uploads on complete
-            // For instance, get the download URL: https://firebasestorage.googleapis.com/...
-            uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
               /*eslint-disable */
 
-              console.log('File available at', downloadURL)
-              console.log(downloadURL)
+              console.log(error)
               /* eslint-enable */
+            },
+            () => {
+              // Handle successful uploads on complete
+              // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+              uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                /*eslint-disable */
 
-              this.picture = downloadURL
+                console.log('File available at', downloadURL)
+                console.log(downloadURL)
+                /* eslint-enable */
 
-              this.registrar()
-            })
-          }
-        )
+                this.picture = downloadURL
+
+                this.registrar()
+              })
+            }
+          )
+        } else {
+          this.picture = this.auxurl
+
+          this.registrar()
+        }
       } catch (error) {
         alert('Subiendo imagen' + error)
-        this.url = this.auxurl
+        this.picture = this.auxurl
         this.registrar()
       }
     },
@@ -468,6 +473,8 @@ export default {
       }
     },
     changeCiudad() {
+      alert(JSON.stringify(this.auxiliares))
+
       this.ciudades = this.auxiliares.ciudad.filter(
         (m) => m.provincia === this.provincia
       )
