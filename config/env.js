@@ -1,3 +1,3 @@
 export default {
-  endpoint: 'http://cityemark.com/server/apis',
+  endpoint: 'https://cityemark.com/server/apis',
 }
