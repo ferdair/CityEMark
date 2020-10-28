@@ -114,9 +114,15 @@
         </v-card>
       </v-container>
     </div>
-    <v-alert v-if="error" type="error">
+    <v-snackbar v-model="error" :multi-line="true">
       {{ error_msg }}
-    </v-alert>
+
+      <template v-slot:action="{ attrs }">
+        <v-btn color="red" text v-bind="attrs" @click="error = false">
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-app>
 </template>
 
@@ -186,7 +192,6 @@ export default {
     this.cedula = this.loggedInUser.cedula
     this.correo = this.loggedInUser.correo
     this.telefono = this.loggedInUser.telefono + ''
-    alert(this.telefono)
     this.fromDateVal = this.loggedInUser.fechaNac
     this.provincia = Number(this.loggedInUser.idProvincia)
     this.ciudad = Number(this.loggedInUser.idCiudad)
@@ -220,12 +225,18 @@ export default {
           comercio: this.loggedInUser.idComercio,
           ciudad: this.ciudad,
         }
-        alert(JSON.stringify(json))
         const data = await axios.put(
           `${env.endpoint}/usuarioComercio.php`,
           json
         )
         if (data.data.code === 200) {
+          const us = await axios.get(
+            env.endpoint + '/usuarioComercio.php?id=' + this.loggedInUser.id
+          )
+
+          this.error = true
+          this.error_msg = data.data.message
+
           this.$router.push({
             path: '/usuarioComercio',
           })

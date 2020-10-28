@@ -99,11 +99,11 @@ export default {
         icon: 'mdi-piggy-bank',
         path: '/comercio/promociones',
       },
-      {
+      /*  {
         title: 'Productos',
         icon: 'mdi-package-variant',
         path: '/comercio/productos',
-      },
+      }, */
       {
         title: 'Estadísticas',
         icon: 'mdi-chart-areaspline-variant',

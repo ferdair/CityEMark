@@ -52,12 +52,11 @@
                       </v-list-group>
                     </v-list> </v-card
                 ></v-card>
+                <v-btn text to="/comercio/vitrinas" nuxt> Regresar </v-btn>
 
                 <v-btn color="primary" @click="validacion1()">
                   Continuar
                 </v-btn>
-
-                <v-btn text to="/comercio/vitrinas" nuxt> Regresar </v-btn>
               </v-stepper-content>
 
               <v-stepper-content step="2">
@@ -135,10 +134,11 @@
                       </v-row>
                     </v-form> </v-container
                 ></v-card>
-
-                <v-btn color="primary" @click="validacion2()"> Continue </v-btn>
-
                 <v-btn text @click="e1 = 1"> Regresar </v-btn>
+
+                <v-btn color="primary" @click="validacion2()">
+                  Continuar
+                </v-btn>
               </v-stepper-content>
 
               <v-stepper-content step="3">
@@ -179,12 +179,11 @@
                     </v-col></v-row
                   >
                 </v-card>
+                <v-btn text @click="e1 = 2"> Regresar </v-btn>
 
                 <v-btn color="primary" @click="editarRegistro()">
-                  Registrar
+                  Guardar Cambios
                 </v-btn>
-
-                <v-btn text @click="e1 = 2"> Regresar </v-btn>
               </v-stepper-content>
             </v-stepper-items>
           </v-stepper>
@@ -219,6 +218,15 @@
         </v-card>
       </v-dialog></v-row
     >
+    <v-snackbar v-model="error" :multi-line="true">
+      {{ error_msg }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn color="red" text v-bind="attrs" @click="error = false">
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-app>
 </template>
 <script>
@@ -232,6 +240,8 @@ export default {
   layout: 'usuarioComercio',
   middleware: ['auth'],
   data: () => ({
+    error: false,
+    error_msg: '',
     e1: 1,
     aux: null,
     valid: true,
@@ -300,7 +310,6 @@ export default {
     this.imgsp = im.data.data
 
     this.imgsp = this.imgsp.filter((e) => e.estado === 0)
-    alert(JSON.stringify(this.imgsp))
     this.auximg = im.data.data.filter((e) => e.estado === 0)
 
     this.auximgeli = []
@@ -327,9 +336,11 @@ export default {
     },
     async validacion3() {
       if (this.files.lenght === 0) {
-        alert('Por favor, suba al menos una imagen')
+        this.error = true
+        this.error_msg = 'Por favor suba al menos una imágen'
       } else if (this.files.lenght > 6) {
-        alert('Puede subir máximo 6 imágenes por producto')
+        this.error = true
+        this.error_msg = 'Puede subir máximo 6 imágenes por producto'
       } else {
         const json = {
           id: this.producto.id_producto,
@@ -353,7 +364,10 @@ export default {
         const up = await axios.put(env.endpoint + '/producto.php', json)
 
         if (up.data.code === 200) {
-          alert('Sus cambios estarán disponibles en un par de minutos')
+          alert('Actualice la página por favor')
+          this.error = true
+          this.error_msg =
+            'Sus cambios estarán disponibles en un par de minutos'
 
           this.files.forEach((element) => {
             /*  */
@@ -374,7 +388,11 @@ export default {
                   (snapshot.bytesTransferred / snapshot.totalBytes) * 100
                 /*eslint-disable */
 
-                console.log('Upload is ' + progress + '% done')
+                this.error = true
+                this.error_msg =
+                  'La carga está completa en un ' + progress + '%'
+
+                // console.log('Upload is ' + progress + '% done')
                 /* eslint-enable */
               },
               (error) => {
@@ -383,8 +401,9 @@ export default {
 
           */
                 /*eslint-disable */
-
-                console.log(error)
+                this.error = true
+                this.error_msg = error
+                // console.log(error)
                 /* eslint-enable */
               },
               () => {
@@ -393,8 +412,8 @@ export default {
                 uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
                   /*eslint-disable */
 
-                  console.log('File available at', downloadURL)
-                  console.log(downloadURL)
+                  /*  console.log('File available at', downloadURL)
+                  console.log(downloadURL) */
                   this.picture = downloadURL
 
                   this.subirImagen(up.data.data[0].id_producto)
@@ -418,6 +437,9 @@ export default {
         })
 
         if (tp.data.code === 200) {
+          this.error = true
+          this.error_msg = tp.data.message
+
           const pos = this.aux
             .map(function (e) {
               return e.idCategoria
@@ -461,7 +483,8 @@ export default {
       const vi = await axios.put(env.endpoint + '/producto.php', json)
 
       if (vi.data.code === 200) {
-        alert('Sus cambios estarán disponibles en un par de minutos')
+        this.error = true
+        this.error_msg = vi.data.message
         this.auximgeli.forEach(async (element) => {
           const r = await axios.patch(env.endpoint + '/imagenProducto.php', {
             id: element[0].id_imgProducto,
@@ -470,7 +493,8 @@ export default {
           })
 
           if (r.data.code !== 200) {
-            alert(r.data.message)
+            this.error = true
+            this.error_msg = r.data.message
           }
         })
         // alert(this.files)
@@ -493,8 +517,9 @@ export default {
                 const progress =
                   (snapshot.bytesTransferred / snapshot.totalBytes) * 100
                 /*eslint-disable */
-
-                console.log('Upload is ' + progress + '% done')
+                this.error = true
+                this.error_msg =
+                  'La carga está completa en un ' + progress + '%'
                 /* eslint-enable */
               },
               (error) => {
@@ -502,8 +527,9 @@ export default {
           this.error_msg = JSON.stringify(error.message)
           */
                 /*eslint-disable */
-
-                console.log(error)
+                this.error = true
+                this.error_msg = error
+                // console.log(error)
                 /* eslint-enable */
               },
               () => {
@@ -512,8 +538,8 @@ export default {
                 uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
                   /*eslint-disable */
 
-                  console.log('File available at', downloadURL)
-                  console.log(downloadURL)
+                  /* console.log('File available at', downloadURL)
+                  console.log(downloadURL) */
                   this.picture = downloadURL
 
                   this.subirImagen(this.producto[0].id_producto)
@@ -521,20 +547,23 @@ export default {
               }
             )
           })
-
+          this.error = true
+          this.error_msg = 'Actualice la página por favor'
           this.$router.push({
             path: '/comercio/vitrinas',
           })
-          alert('Actualice la página por favor')
         } else {
-          alert('Actualice la página por favor')
+          this.error = true
+          this.error_msg = 'Actualice la página por favor'
 
           this.$router.push({
             path: '/comercio/vitrinas',
           })
         }
       } else {
-        alert(vi.data.message)
+        this.error = true
+        this.error_msg = vi.data.message
+        // alert(vi.data.message)
       }
     },
     uploadImage() {

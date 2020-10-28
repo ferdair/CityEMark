@@ -50,8 +50,6 @@
                 </v-card>
 
                 <v-btn color="primary" @click="e1 = 2"> Siguiente </v-btn>
-
-                <v-btn text> Cancelar </v-btn>
               </v-stepper-content>
 
               <v-stepper-content step="2">
@@ -172,10 +170,9 @@
                       </v-row>
                     </v-form> </v-container
                 ></v-card>
+                <v-btn text> Anterior </v-btn>
 
                 <v-btn color="primary" @click="e1 = 3"> Siguiente </v-btn>
-
-                <v-btn text> Cancelar </v-btn>
               </v-stepper-content>
 
               <v-stepper-content step="3">
@@ -195,16 +192,26 @@
                       :src="url"
                     ></v-img> </v-col
                 ></v-card>
+                <v-btn text> Anterior </v-btn>
 
-                <v-btn color="primary" @click="subirImagen"> Registrar </v-btn>
-
-                <v-btn text> Cancelar </v-btn>
+                <v-btn color="primary" @click="subirImagen">
+                  Guardar Cambios
+                </v-btn>
               </v-stepper-content>
             </v-stepper-items>
           </v-stepper>
         </v-col>
       </v-row>
     </v-container>
+    <v-snackbar v-model="error" :multi-line="true">
+      {{ error_msg }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn color="red" text v-bind="attrs" @click="error = false">
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-app>
 </template>
 
@@ -363,8 +370,9 @@ export default {
               const progress =
                 (snapshot.bytesTransferred / snapshot.totalBytes) * 100
               /*eslint-disable */
-
-              console.log('Upload is ' + progress + '% done')
+              this.error = true
+              this.error_msg = 'La carga está completa en un ' + progress + '%'
+              // console.log('Upload is ' + progress + '% done')
               /* eslint-enable */
             },
             (error) => {
@@ -373,8 +381,9 @@ export default {
 
           */
               /*eslint-disable */
-
-              console.log(error)
+              this.error = true
+              this.error_msg = error
+              // console.log(error)
               /* eslint-enable */
             },
             () => {
@@ -383,8 +392,8 @@ export default {
               uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
                 /*eslint-disable */
 
-                console.log('File available at', downloadURL)
-                console.log(downloadURL)
+                // console.log('File available at', downloadURL)
+                // console.log(downloadURL)
                 /* eslint-enable */
 
                 this.picture = downloadURL
@@ -399,32 +408,14 @@ export default {
           this.registrar()
         }
       } catch (error) {
-        alert('Subiendo imagen' + error)
+        this.error = true
+        this.error_msg = error
+        // alert('Subiendo imagen' + error)
         this.picture = this.auxurl
         this.registrar()
       }
     },
     async registrar() {
-      /* {
- "id": "2",
- "nombre": "Tixiki Licores",
- "eslogan": "Licores Premium 24 horas",
- "correo": "tixiki@espe.edu.ec",
- "direccion": "Latacunga cerca al Terminal Terrestre",
- "ubicacionGPS": "-0.987,78.95",
- "estado": 1,
- "ciudad": 3,
- "tipoComercio": 0,
- "imagenLogo": "url Imagen",
- "centroComercial": 1,
- "numeroLocal": 0,
- "categoria": 0,
- "palabrasClave": "",
- "vendedores": 1,
- "observaciones": "",
- "tipoInterno": 1
-} */
-
       const json = {
         id: this.loggedInUser.idComercio,
         nombre: this.nombre,
@@ -467,13 +458,16 @@ export default {
             })
           }
         })
+
+        this.error = true
+        this.error_msg = data.data.message
       } else {
         this.error = true
-        this.error_msg = 'error'
+        this.error_msg = data.data.message
       }
     },
     changeCiudad() {
-      alert(JSON.stringify(this.auxiliares))
+      //  alert(JSON.stringify(this.auxiliares))
 
       this.ciudades = this.auxiliares.ciudad.filter(
         (m) => m.provincia === this.provincia
@@ -505,7 +499,7 @@ export default {
       this.telefonos = this.telefonos.filter((i) => i.telefono !== numero)
     },
     agregarRedSocial() {
-      alert(this.nuevoTipoRed)
+      // alert(this.nuevoTipoRed)
       this.redesSociales.push({
         urlRedSocial: this.nuevaRed,
         idTipoRedSocial: this.nuevoTipoRed,

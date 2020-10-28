@@ -31,9 +31,15 @@
         <v-btn color="info" @click="userLogin">Iniciar Sesión</v-btn>
       </v-card-actions>
     </v-card>
-    <v-alert v-if="error" type="error">
+    <v-snackbar v-model="error" :multi-line="true">
       {{ error_msg }}
-    </v-alert>
+
+      <template v-slot:action="{ attrs }">
+        <v-btn color="red" text v-bind="attrs" @click="error = false">
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-app>
 </template>
 
@@ -68,7 +74,7 @@ import env from '../config/env'
         this.$auth.$storage.setUniversal('user', data, true)
       } catch (error) {
         this.error = true
-        this.error_msg = error.response.data.message
+        this.error_msg = 'No se pudo iniciar sesión'
       }
     },
   },

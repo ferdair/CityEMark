@@ -74,6 +74,15 @@
         </v-col>
       </v-row>
     </v-container>
+    <v-snackbar v-model="error" :multi-line="true">
+      {{ error_msg }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn color="red" text v-bind="attrs" @click="error = false">
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-app>
 </template>
 
@@ -88,6 +97,8 @@ export default {
   layout: 'usuarioComercio',
   middleware: ['auth'],
   data: () => ({
+    error: false,
+    error_msg: '',
     files: null,
     auximgeli: [],
     auximg: [],
@@ -153,7 +164,9 @@ export default {
       const vi = await axios.put(env.endpoint + '/vitrinaComercio.php', json)
 
       if (vi.data.code === 200) {
-        alert('Sus cambios estarán disponibles en un par de minutos')
+        this.error = true
+        this.error_msg = vi.data.message
+        // alert('Sus cambios estarán disponibles en un par de minutos')
         this.auximgeli.forEach(async (element) => {
           const r = await axios.patch(
             env.endpoint + '/imagenVitrinaComercio.php',
@@ -165,7 +178,8 @@ export default {
           )
 
           if (r.data.code !== 200) {
-            alert(r.data.message)
+            this.error = true
+            this.error_msg = r.data.message
           }
         })
         // alert(this.files)
@@ -189,7 +203,10 @@ export default {
                   (snapshot.bytesTransferred / snapshot.totalBytes) * 100
                 /*eslint-disable */
 
-                console.log('Upload is ' + progress + '% done')
+                this.error = true
+                this.error_msg =
+                  'La carga está completa en un ' + progress + '%'
+                /* console.log('Upload is ' + progress + '% done') */
                 /* eslint-enable */
               },
               (error) => {
@@ -198,8 +215,8 @@ export default {
           */
                 /*eslint-disable */
 
-                console.log(error)
-                /* eslint-enable */
+                this.error = true
+                this.error_msg = error /* eslint-enable */
               },
               () => {
                 // Handle successful uploads on complete
@@ -207,8 +224,8 @@ export default {
                 uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
                   /*eslint-disable */
 
-                  console.log('File available at', downloadURL)
-                  console.log(downloadURL)
+                  /*   console.log('File available at', downloadURL)
+                  console.log(downloadURL) */
                   this.picture = downloadURL
 
                   this.subirImagen(this.vitrina[0].id_vitrina)
@@ -220,16 +237,19 @@ export default {
           this.$router.push({
             path: '/comercio/vitrinas',
           })
-          alert('Actualice la página por favor')
+          this.error = true
+          this.error_msg = 'Actualice la página por favor'
         } else {
-          alert('Actualice la página por favor')
+          this.error = true
+          this.error_msg = 'Actualice la página por favor'
 
           this.$router.push({
             path: '/comercio/vitrinas',
           })
         }
       } else {
-        alert(vi.data.message)
+        this.error = true
+        this.error_msg = vi.data.message
       }
     },
 
