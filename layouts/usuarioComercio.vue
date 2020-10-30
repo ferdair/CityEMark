@@ -16,6 +16,7 @@
             v-for="item in items"
             :key="item.title"
             :to="item.path"
+            :target="item.target"
             nuxt
             link
           >
@@ -25,6 +26,18 @@
 
             <v-list-item-content>
               <v-list-item-title>{{ item.title }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item
+            :href="`http://cityemark.com/pdfTutorial/app/index.php?id=${this.loggedInUser.idComercio}`"
+            target="_blank"
+          >
+            <v-list-item-icon>
+              <v-icon>mdi-pdf-box</v-icon>
+            </v-list-item-icon>
+
+            <v-list-item-content>
+              <v-list-item-title>Generador de catálogo</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -92,12 +105,19 @@ export default {
         title: 'Inicio',
         icon: 'mdi-view-dashboard',
         path: '/usuarioComercio',
+        target: '_self',
       },
-      { title: 'Vitrinas', icon: 'mdi-store', path: '/comercio/vitrinas' },
+      {
+        title: 'Vitrinas',
+        icon: 'mdi-store',
+        path: '/comercio/vitrinas',
+        target: '_self',
+      },
       {
         title: 'Promociones',
         icon: 'mdi-piggy-bank',
         path: '/comercio/promociones',
+        target: '_self',
       },
       /*  {
         title: 'Productos',
@@ -108,16 +128,19 @@ export default {
         title: 'Estadísticas',
         icon: 'mdi-chart-areaspline-variant',
         path: '/comercio/estadisticas',
+        target: '_self',
       },
-      {
+      /*  {
         title: 'Generador de catálogo',
         icon: 'mdi-pdf-box',
-        path: '/comercio/catalogo',
-      },
+        path: 'http://cityemark.com/pdfTutorial/app/index.php?id=48',
+        target: '_blank	',
+      }, */
       {
         title: 'Contactar a soporte',
         icon: 'mdi-help-box',
         path: '/comercio/soporte',
+        target: '_self',
       },
     ],
     right: null,

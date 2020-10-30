@@ -255,10 +255,9 @@
                   ></v-autocomplete>
                 </v-card-text>
               </v-card>
+              <v-btn @click="e1 = 1" text> Regresar </v-btn>
 
-              <v-btn color="primary" @click="guardar"> Continue </v-btn>
-
-              <v-btn text> Cancel </v-btn>
+              <v-btn color="primary" @click="guardar"> Guardar </v-btn>
             </v-stepper-content>
           </v-stepper-items>
         </v-stepper>

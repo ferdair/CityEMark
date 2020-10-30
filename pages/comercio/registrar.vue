@@ -181,10 +181,9 @@
                       </v-row>
                     </v-form> </v-container
                 ></v-card>
+                <v-btn text @click="e1 = 1"> Regresar </v-btn>
 
                 <v-btn color="primary" @click="e1 = 3"> Siguiente </v-btn>
-
-                <v-btn text> Cancelar </v-btn>
               </v-stepper-content>
 
               <v-stepper-content step="3">
@@ -207,7 +206,7 @@
 
                 <v-btn color="primary" @click="subirImagen"> Registrar </v-btn>
 
-                <v-btn text> Cancelar </v-btn>
+                <v-btn text @click="e1 = 2"> Regresar </v-btn>
               </v-stepper-content>
             </v-stepper-items>
           </v-stepper>
