@@ -2,7 +2,7 @@ import colors from 'vuetify/es5/util/colors'
 
 export default {
   // Target (https://go.nuxtjs.dev/config-target)
-  target: 'server',
+  target: 'static',
 
   // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {
@@ -61,8 +61,7 @@ export default {
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
   axios: {
-    baseURL: 'https://cityemark.com/server/apis',
-    https: true,
+    baseURL: 'http://cityemark.com/server/apis',
   },
 
   proxy: {
@@ -112,6 +111,12 @@ export default {
           },
         },
       },
+    },
+    redirect: {
+      login: '/login',
+      logout: '/',
+      callback: '/login',
+      home: '/usuarioComercio',
     },
   },
 }

@@ -48,10 +48,9 @@
                     ></v-select>
                   </v-col>
                 </v-card>
+                <v-btn text to="/login"> Cancelar </v-btn>
 
                 <v-btn color="primary" @click="e1 = 2"> Siguiente </v-btn>
-
-                <v-btn text> Cancelar </v-btn>
               </v-stepper-content>
 
               <v-stepper-content step="2">
@@ -182,10 +181,9 @@
                       </v-row>
                     </v-form> </v-container
                 ></v-card>
+                <v-btn text @click="e1 = 1"> Regresar </v-btn>
 
                 <v-btn color="primary" @click="e1 = 3"> Siguiente </v-btn>
-
-                <v-btn text> Cancelar </v-btn>
               </v-stepper-content>
 
               <v-stepper-content step="3">
@@ -208,13 +206,22 @@
 
                 <v-btn color="primary" @click="subirImagen"> Registrar </v-btn>
 
-                <v-btn text> Cancelar </v-btn>
+                <v-btn text @click="e1 = 2"> Regresar </v-btn>
               </v-stepper-content>
             </v-stepper-items>
           </v-stepper>
         </v-col>
       </v-row>
     </v-container>
+    <v-snackbar v-model="error" :multi-line="true">
+      {{ error_msg }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn color="red" text v-bind="attrs" @click="error = false">
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-app>
 </template>
 
@@ -333,8 +340,9 @@ export default {
           const progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100
           /*eslint-disable */
-
-          console.log('Upload is ' + progress + '% done')
+          this.error = true
+          this.error_msg = 'La carga está completa en un ' + progress + '%'
+          // console.log('Upload is ' + progress + '% done')
           /* eslint-enable */
         },
         (error) => {
@@ -343,8 +351,9 @@ export default {
 
           */
           /*eslint-disable */
-
-          console.log(error)
+          this.error = true
+          this.error_msg = error
+          // console.log(error)
           /* eslint-enable */
         },
         () => {
@@ -353,8 +362,8 @@ export default {
           uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
             /*eslint-disable */
 
-            console.log('File available at', downloadURL)
-            console.log(downloadURL)
+            /* console.log('File available at', downloadURL)
+            console.log(downloadURL) */
             /* eslint-enable */
 
             this.picture = downloadURL
@@ -387,6 +396,9 @@ export default {
       const data = await axios.post(env.endpoint + '/datosComercio.php', json)
 
       if (data.data.code === 200) {
+        this.error = true
+        this.error_msg = data.data.message
+
         this.telefonos.forEach(async (element) => {
           await axios.post(env.endpoint + '/telefonoComercio.php', {
             numeroTelefono: element.telefono,
@@ -401,14 +413,6 @@ export default {
             urlRedSocial: element.urlRedSocial,
             idTipoRedSocial: element.idTipoRedSocial,
           })
-
-          if (a.data.code === 200) {
-            this.error = true
-            this.error_msg = patchUser.data.message
-          } else {
-            this.error = true
-            this.error_msg = a.data.message
-          }
         })
 
         const patchUser = await axios.patch(
@@ -424,13 +428,11 @@ export default {
           this.error = true
           this.error_msg = patchUser.data.message
 
-          this.$store.commit('SET_UComercio', data.data.data[0].idComercio)
+          location.replace('/usuarioComercio')
 
-          // this.SET_UComercio(data.data.data[0].idComercio)
-          // this.loggedInUser.idComercio = data.data.data[0].idComercio
-          this.$router.push({
-            path: '/usuarioComercio',
-          })
+          /*  this.$router.push({
+            path: '/comercio/vitrinas',
+          }) */
         } else {
           this.error = true
           this.error_msg = patchUser.data.message
@@ -462,7 +464,7 @@ export default {
       this.telefonos = this.telefonos.filter((i) => i.telefono !== numero)
     },
     agregarRedSocial() {
-      alert(this.nuevoTipoRed)
+      // alert(this.nuevoTipoRed)
       this.redesSociales.push({
         urlRedSocial: this.nuevaRed,
         idTipoRedSocial: this.nuevoTipoRed,

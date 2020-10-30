@@ -10,6 +10,10 @@
                   class="headline"
                   v-text="tienda.nombre"
                 ></v-card-title>
+                <v-card-title
+                  class="headline"
+                  v-text="tienda.bloque"
+                ></v-card-title>
                 <v-card-subtitle v-text="tienda.eslogan"></v-card-subtitle>
 
                 <v-card-actions>
@@ -111,6 +115,7 @@ export default {
       src: '',
       nombre: '',
       eslogan: '',
+      bloque: '',
     },
     colors: ['#2196F3', '#90CAF9', '#64B5F6', '#42A5F5'],
     names: ['Pedido'],
@@ -148,6 +153,14 @@ export default {
     this.tienda.nombre =
       comercio.data.data[0].nombre + ' ' + comercio.data.data[0].id
     this.tienda.eslogan = comercio.data.data[0].eslogan
+
+    const bloq =
+      comercio.data.data[0].numeroLocal > 100 &&
+      comercio.data.data[0].numeroLocal < 200
+        ? 'Bloque A - Local ' + comercio.data.data[0].numeroLocal
+        : 'Bloque B - Local ' + comercio.data.data[0].numeroLocal
+
+    this.tienda.bloque = bloq
   },
 }
 </script>

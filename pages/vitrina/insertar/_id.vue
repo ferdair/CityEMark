@@ -220,6 +220,8 @@ export default {
     files: null,
     url: null,
     aux: null,
+    error: false,
+    error_msg: '',
   }),
   async mounted() {
     const tp = await axios.get(env.endpoint + '/tipoProducto.php')
@@ -307,8 +309,10 @@ export default {
                 const progress =
                   (snapshot.bytesTransferred / snapshot.totalBytes) * 100
                 /*eslint-disable */
-
-                console.log('Upload is ' + progress + '% done')
+                this.error = true
+                this.error_msg =
+                  'La carga está completa en un ' + progress + '%'
+                // console.log('Upload is ' + progress + '% done')
                 /* eslint-enable */
               },
               (error) => {
@@ -318,8 +322,8 @@ export default {
           */
                 /*eslint-disable */
 
-                console.log(error)
-                /* eslint-enable */
+                this.error = true
+                this.error_msg = error /* eslint-enable */
               },
               () => {
                 // Handle successful uploads on complete
@@ -327,8 +331,8 @@ export default {
                 uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
                   /*eslint-disable */
 
-                  console.log('File available at', downloadURL)
-                  console.log(downloadURL)
+                  /* console.log('File available at', downloadURL)
+                  console.log(downloadURL) */
                   this.picture = downloadURL
 
                   this.subirImagen(up.data.data[0].id_producto)
@@ -344,7 +348,9 @@ export default {
           })
 
           if (pv.data.code === 200) {
-            alert('Se agregó el producto correctamente')
+            this.error = true
+            this.error_msg = 'Se agregó el producto correctamente'
+            // alert('Se agregó el producto correctamente')
             this.$router.push({
               path: '/comercio/vitrinas',
             })
